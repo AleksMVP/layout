@@ -66,7 +66,7 @@ input:focus {
     font-family: 'Roboto', sans-serif;
     color: rgb(99, 97, 97);
     outline: none;
-    
+    text-decoration: none;
 }
 
 .navpoint:hover {
