@@ -1,0 +1,65 @@
+main {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    font-family: 'Roboto', sans-serif;
+}
+
+.leftcolumn {
+    margin: 20px;
+}
+
+.avatar {
+   height: 200px; 
+   width: 250px;
+   border-radius: 10px;
+}
+
+.socialnetworks {
+    display: flex;
+    flex-direction: column;
+}
+
+.link {
+    text-decoration: none;
+    color: black
+}
+
+.networkicon {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}
+
+.metings {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+}
+
+.iconwithtext {
+    display: flex;
+    align-items: center;
+    margin: 5px 0 5px 0;
+}
+
+.meticon {
+    width: 25px;
+    height: 25px;
+    margin-right: 5px;
+}
+
+.rightcolumn {
+    display: flex;
+    flex-direction: column;
+
+    max-width: 450px;
+}
+
+.bold {
+    font-weight: bolder;
+}
+
+.margin10 {
+    margin-bottom: 10px;
+}
