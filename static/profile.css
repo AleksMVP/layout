@@ -5,7 +5,8 @@ main {
     font-family: 'Roboto', sans-serif;
 }
 
-.leftcolumn {
+.leftcolumn,
+.rightcolumn {
     margin: 20px;
 }
 
