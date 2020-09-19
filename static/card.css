@@ -1,21 +1,23 @@
-div.usercard {
+.usercard {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
 
+    position: relative;
+
     font-family: 'Roboto', sans-serif;
 
-    margin: 15px 15px;
+    margin: 10px;
 
     height: 400px;
-    width: 250px;
+    max-width: 300px;
 }
 
-div.usercard > * {
+.usercard > * {
     z-index: 3;
 }
 
-div.usercard > *:last-child {
+.usercard > *:last-child {
     margin-bottom: 5px;
 }
 
@@ -27,55 +29,43 @@ div.usercard > *:last-child {
 .intabels {
     display: flex;
     align-items: center;
-
     align-self: flex-end;
 
     font-size: 15px;
     margin: 5px 5px;
     padding: 1px 4px;
 
-    height: 20px;
-
     border-radius: 100px;
     background-color: rgba(248, 146, 62, 0.8);
     color: white;
 }
 
-div.usercard h3 {
+.usercard h3, h2, span {
+    color: white;
+    margin-left: 10px;
     margin-bottom: 0px;
 }
 
-div.usercard h3, h2, span {
-    color: white;
-    margin-left: 5px;
-}
-
-div.usercard .borpos {
+.borpos {
     position: absolute;
     border-radius: 10px;
-    box-shadow: 1px 2px 10px 0px grey;
-    height: 400px;
-    width: 250px;
 
-    z-index: 1;
+    height: 100%;
+    width: 100%;
 }
 
-div.usercard div.borpos {
+.borpos {
     z-index: 2;
     background: linear-gradient(to top, rgba(0, 0, 0, .9) 0%, rgba(255, 255, 255, .1) 100%);
 }
 
-div.usercard div.borpos:hover {
+div.borpos:hover {
     background: linear-gradient(to top, rgba(0, 0, 0, 1) 25%, rgba(255, 255, 255, 0.1) 100%);
+    box-shadow: 1px 2px 10px 0px grey;
 }
 
-
-div.usercard h2 {
-    margin-bottom: -2px;
-}
-
-div.usercard h3 {
-    margin-top: 5px;
+.top {
+    z-index: 3;
 }
 
 page {
@@ -84,8 +74,9 @@ page {
 }
 
 
-div.meetcard {
+.meetcard {
     position: relative;
+
     display: flex;
     flex-direction: column;
 
@@ -94,6 +85,7 @@ div.meetcard {
 
     height: 200px;
     width: 400px;
+    padding-left: 15px;
 
     margin: 15px 15px;
 
@@ -102,13 +94,8 @@ div.meetcard {
     border-radius: 10px;
 }
 
-div.meetcard > * {
+.meetcard > * {
     z-index: 2;
-}
-
-div.meetcard h3 {
-    margin-bottom: 95px;
-    margin-top: 5px
 }
 
 div.meetcard > *:last-child {
@@ -125,9 +112,8 @@ div.meetcard img {
     z-index: 1;
 }
 
-div.meetcard h3, h4 {
-    margin-left: 5px;
-    z-index: 3;
+.meetcard h3, h4 {
+    z-index: 2;
     color: white;
 }
 
@@ -141,16 +127,16 @@ div.meetcard img {
     box-shadow: 1px 2px 10px 0px grey; 
 }
 
-div.meetcard div {
+.swimblock {
     position: absolute;
-
+    
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
 
     left: 100px;
-
-    height: 100%;
-    width: 300px;
+    height: 90%;
+    padding: 10px;
 
     border-radius: 0 10px 10px 0;
 
@@ -159,21 +145,21 @@ div.meetcard div {
     color: white;
     opacity: 0;
 
-    -webkit-transition: all 1s;
-    -o-transition: all 1s;
-    transition: all 1s;
+    -webkit-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    transition: all 0.5s;
 }
 
-div.meetcard div:hover {
+
+.swimblock:hover {
     opacity: 1;
 }
 
-div.meetcard .inmeetcard {
+.inmeetcard {
     display: flex;
     flex-direction: row;
 
     position: static;
 
     opacity: 1;
-    background: unset;
 }
