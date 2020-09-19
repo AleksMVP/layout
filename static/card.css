@@ -46,6 +46,11 @@
     margin-bottom: 0px;
 }
 
+img.borpos {
+    width:100%;
+    object-fit:cover;
+}
+
 .borpos {
     position: absolute;
     border-radius: 10px;
