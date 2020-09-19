@@ -10,20 +10,20 @@
     margin: 10px;
 
     height: 400px;
-    max-width: 300px;
+    width: 250px;
 }
 
 .usercard > * {
     z-index: 3;
 }
 
-.usercard > *:last-child {
-    margin-bottom: 5px;
+.wraper {
+    margin: 0 0 10px 10px
 }
 
 .tabels {
     display: flex;
-    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .intabels {
@@ -33,7 +33,7 @@
 
     font-size: 15px;
     margin: 5px 5px;
-    padding: 1px 4px;
+    padding: 2px 6px;
 
     border-radius: 100px;
     background-color: rgba(248, 146, 62, 0.8);
@@ -42,7 +42,7 @@
 
 .usercard h3, h2, span {
     color: white;
-    margin-left: 10px;
+    margin-left: 5px;
     margin-bottom: 0px;
 }
 
@@ -79,18 +79,16 @@ page {
 }
 
 
-.meetcard {
+.metcard {
     position: relative;
 
     display: flex;
     flex-direction: column;
 
-    background-color: orange;
     box-shadow: 1px 2px 10px 0px grey;
 
-    height: 200px;
+    height: 300px;
     width: 400px;
-    padding-left: 15px;
 
     margin: 15px 15px;
 
@@ -99,37 +97,43 @@ page {
     border-radius: 10px;
 }
 
-.meetcard > * {
+.metcard > * {
     z-index: 2;
 }
 
-div.meetcard > *:last-child {
+div.metcard > *:last-child {
     margin-top: -10px;
 }
 
-div.meetcard img {
+.metcard img {
     position: absolute;
     border-radius: 10px;
     box-shadow: 1px 2px 10px 0px grey;
-
-    height: 200px;
-    width: 400px;
     z-index: 1;
+
+    width: 100%;
+    object-fit:cover;
 }
 
-.meetcard h3, h4 {
+.metcard h3, h4 {
     z-index: 2;
     color: white;
+    margin-left: 20px;
 }
 
-div.meetcard img {
+.metcard h4 {
+    margin-top: auto;
+    margin-bottom: 20px;
+}
+
+.metimg {
     position: absolute;
 
     height: 100%;
     width: 100%;
 
     border-radius: 10px;
-    box-shadow: 1px 2px 10px 0px grey; 
+    box-shadow: 1px 2px 10px 0px grey;  
 }
 
 .swimblock {
@@ -140,8 +144,7 @@ div.meetcard img {
     justify-content: space-around;
 
     left: 100px;
-    height: 90%;
-    padding: 10px;
+    height: 100%;
 
     border-radius: 0 10px 10px 0;
 
@@ -155,12 +158,16 @@ div.meetcard img {
     transition: all 0.5s;
 }
 
+.swimblock > * {
+    margin: 15px;
+}
+
 
 .swimblock:hover {
     opacity: 1;
 }
 
-.inmeetcard {
+.inmetcard {
     display: flex;
     flex-direction: row;
 
