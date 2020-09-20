@@ -3,15 +3,12 @@ const head = document.head;
 
 const cssHrefs = {
     header: [
-        'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100&display=swap',
         'css/header.css',
     ],
     navigation: [
-        'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100&display=swap',
         'css/header.css',
     ],
     metcard: [
-        'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;1,100&display=swap',
         'css/metcard.css',
         'css/main.css',
     ],
@@ -78,7 +75,6 @@ function createHeader() {
     const icon = tmp.getElementsByClassName('icon')[0];
     icon.dataset.section = 'profile';
 
-    addCSS('header');
     application.appendChild(tmp.firstElementChild);
 }
 
@@ -104,7 +100,6 @@ function createNavigation() {
         navigation.appendChild(navPoint);
     });
 
-    addCSS('navigation');
     
     application.appendChild(navigation);
 }
@@ -133,7 +128,6 @@ function createMetCard(data) {
         labels.appendChild(label);
     });
 
-    addCSS('metcard'); 
 
     return tmp.firstElementChild;
 }
@@ -175,7 +169,6 @@ function createUserCard(data) {
         skills.appendChild(label);
     });
 
-    addCSS('usercard');
     
     return tmp.firstElementChild;
 }
@@ -361,7 +354,6 @@ function createProfile(data) {
         
         networks.appendChild(iconwithtext);
     });
-    addCSS('profile');
 
     return tmp.firstElementChild;
 }
