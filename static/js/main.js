@@ -19,7 +19,10 @@ const cssHrefs = {
         'css/main.css',
     ],
     usercard: [
-        'css/usercard.css'
+        'css/usercard.css',
+    ],
+    profile: [
+        'css/profile.css',
     ]
 }
 
@@ -41,6 +44,7 @@ const appConfig = {
     profile: {
         text: 'Профиль',
         href: '',
+        open: createProfilePage,
     },
     registration: {
         text: "Регистрация",
@@ -67,9 +71,12 @@ function createHeader() {
         <header class="header">
             <img src="assets/google.png" class="logo">
             <input type="search" placeholder="Люди, мероприятия" class="searchinput">
-            <img src="assets/pericon.svg" class="icon" onclick="window.open('profile.html')">
+            <img src="assets/pericon.svg" class="icon">
         </header>
     `
+
+    const icon = tmp.getElementsByClassName('icon')[0];
+    icon.dataset.section = 'profile';
 
     addCSS('header');
     application.appendChild(tmp.firstElementChild);
@@ -221,14 +228,204 @@ function createPeoplesPage() {
     application.appendChild(main);
 }
 
+function createProfile(data) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = `
+    <main>
+        <div class="leftcolumn">
+            <img src="${data.imgSrc}" class="avatar">
+            <div class="iconwithtext">
+                <h2 class="name">${data.name}</h2>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <div class="iconwithtext">
+                <img src="assets/place.svg" class="networkicon">
+                <span>${data.city}</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <hr>
+            <div class="socialnetworks">
+                <div class="iconwithtext">
+                    <img src="assets/vk.png" class="networkicon">
+                    <a href="" class="link">Александр Лукашенко</a>
+                </div>
+                <div class="iconwithtext">
+                    <img src="assets/telegram.png" class="networkicon">
+                    <a href="" class="link">Alexander Lukashenko</a>
+                </div>
+            </div>
+            <hr>
+            <div class="iconwithtext">
+                <img src="assets/arrow.svg" class="networkicon">
+                <span class="bold">Мероприятия</span>
+            </div>
+            <div class="metings">
+                <div class="iconwithtext">
+                    <img src="assets/vk.png" class="meticon">
+                    <a href="" class="link">Somename</a>
+                </div>
+                <div class="iconwithtext">
+                    <img src="assets/telegram.png" class="meticon">
+                    <a href="" class="link">Somename</a>
+                </div>
+                <div class="iconwithtext">
+                    <img src="assets/vk.png" class="meticon">
+                    <a href="" class="link">Somename</a>
+                </div>
+                <div class="iconwithtext">
+                    <img src="assets/telegram.png" class="networkicon">
+                    <a href="" class="link">Somename</a>
+                </div>
+            </div>
+        </div>
+        <div class="rightcolumn">
+            <div class="iconwithtext">
+                <img src="assets/diamond.svg" class="meticon">
+                <span class="bold">Навыки</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <span class="margin10" id="skills">
+                ${data.skills}
+            </span>
+            <div class="iconwithtext">
+                <img src="assets/search.svg" class="meticon">
+                <span class="bold">Интересы</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <span class="margin10" id="interesting">
+                ${data.interestings}
+            </span>
+            <div class="iconwithtext">
+                <img src="assets/education.svg" class="meticon">
+                <span class="bold">Образование</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <span class="margin10" id="education">
+                ${data.education}
+            </span>
+            <div class="iconwithtext">
+                <img src="assets/job.svg" class="meticon">
+                <span class="bold">Карьера</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <span class="margin10" id="job">  
+                ${data.job}
+            </span>
+            <div class="iconwithtext">
+                <img src="assets/aim.svg" class="meticon">
+                <span class="bold">Цели</span>
+                <img src="assets/pen.svg" class="editicon">
+            </div>
+            <span class="margin10" id="aims">  
+                ${data.aims}
+            </span>
+        </div>
+    </main>
+    `;
+
+    const metings = tmp.getElementsByClassName('metings')[0];
+    console.log(metings);
+    data.metings.forEach(meet => {
+        const iconwithtext = document.createElement('div');
+        iconwithtext.classList.add('iconwithtext');
+
+        const meetImg = document.createElement('img');
+        meetImg.src = meet.imgSrc;
+        meetImg.classList.add('networkicon');
+
+        const meetLink = document.createElement('a');
+        meetLink.classList.add('link');
+        meetLink.innerHTML = meet.text;
+
+        iconwithtext.appendChild(meetImg);
+        iconwithtext.appendChild(meetLink);
+        
+        metings.appendChild(iconwithtext);
+    });
+
+    const networks = tmp.getElementsByClassName('socialnetworks')[0];
+    data.networks.forEach(network => {
+        const iconwithtext = document.createElement('div');
+        iconwithtext.classList.add('iconwithtext');
+
+        const meetImg = document.createElement('img');
+        meetImg.src = network.imgSrc;
+        meetImg.classList.add('networkicon');
+
+        const meetLink = document.createElement('a');
+        meetLink.classList.add('link');
+        meetLink.innerHTML = network.text;
+
+        iconwithtext.appendChild(meetImg);
+        iconwithtext.appendChild(meetLink);
+        
+        networks.appendChild(iconwithtext);
+    });
+    addCSS('profile');
+
+    return tmp.firstElementChild;
+}
+
+function createProfilePage() {
+    application.innerHTML = '';
+    createHeader();
+    application.appendChild(createProfile({
+        imgSrc: 'assets/luckash.jpeg',
+        name: 'Александр Лукашенко',
+        city: 'Пертрозаводск',
+        networks: [
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+        ],
+        metings: [
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+        ],
+        interestings: `
+                    Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit, sed 
+                    do eiusmod tempor incididunt ut 
+                    labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis 
+                    nostrud exercitation ullamco 
+                    laboris nisi ut aliquip ex ea 
+                    commodo consequat. Duis aute 
+                    irure dolor in reprehenderit 
+                    in voluptate velit esse cillum 
+        `,
+        skills: `Lorem ipsum dolor sit amet, 
+                consectetur adipiscing elit, sed 
+                do eiusmod tempor incididunt ut 
+                labore et dolore magna aliqua. 
+                Ut enim ad minim veniam, quis 
+                nostrud exercitation ullamco 
+        `,
+        education: 'МГТУ им. Н. Э. Баумана до 2010',
+        job: 'MAIL GROUP до 2008',
+        aims: 'Хочу от жизни всего',
+    }));
+}
 
 createMetPage();
 
 application.addEventListener('click', (evt) => {
     const {target} = evt;
- 
-    if (target instanceof HTMLAnchorElement) {
-        evt.preventDefault();
+    evt.preventDefault();
+    console.log(target.dataset.section);
+    appConfig[target.dataset.section].open();
+    /*if (target instanceof HTMLAnchorElement) {
         appConfig[target.dataset.section].open();
-    }
+    }*/
  });
