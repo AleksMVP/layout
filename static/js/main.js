@@ -73,30 +73,6 @@ function createHeader() {
 
     addCSS('header');
     application.appendChild(tmp.firstElementChild);
-
-    /*const header = document.createElement('header');
-    header.classList.add('header');
-
-    const logo = document.createElement('img');
-    logo.src = 'assets/google.png';
-    logo.classList.add('logo');
-
-    const searchbar = document.createElement('input');
-    searchbar.type = 'search';
-    searchbar.placeholder = 'Люди, мероприятия';
-    searchbar.classList.add('searchinput');
-
-    const icon = document.createElement('img');
-    icon.src = 'assets/pericon.svg';
-    icon.classList.add('icon');
-
-    header.appendChild(logo);
-    header.appendChild(searchbar);
-    header.appendChild(icon);
-
-    addCSS('header');
-
-    application.appendChild(header);*/
 }
 
 function createNavigation() {
@@ -153,52 +129,6 @@ function createMetCard(data) {
     addCSS('metcard'); 
 
     return tmp.firstElementChild;
-
-    /*const metCard = document.createElement('div');
-    metCard.classList.add('metcard');
-
-    const metImg = document.createElement('img');
-    metImg.src = data.imgSrc;
-    metImg.classList.add('metimg');
-
-    const swimBlock = document.createElement('div');
-    swimBlock.classList = ['swimblock top'];
-
-    const mainText = document.createElement('span');
-    mainText.innerHTML = data.text;
-
-    const tabels = document.createElement('div');
-    tabels.classList.add('tabels');
-
-    data.labels.forEach(labelText => {
-        const label = document.createElement('span');
-        label.classList.add('chips');
-        label.innerHTML = labelText;
-
-        tabels.appendChild(label);
-    });
-
-    swimBlock.appendChild(mainText);
-    swimBlock.appendChild(tabels);
-
-    const titleElem = document.createElement('h3');
-    titleElem.innerHTML = data.title;
-
-    const placeElem = document.createElement('h4');
-    placeElem.innerHTML = data.place;
-
-    const dateElem = document.createElement('h4');
-    dateElem.innerHTML = data.date;
-
-    metCard.appendChild(metImg);
-    metCard.appendChild(swimBlock);
-    metCard.appendChild(titleElem);
-    metCard.appendChild(placeElem);
-    metCard.appendChild(dateElem);
-
-    addCSS('metcard');
-
-    return metCard;*/
 }
 
 
