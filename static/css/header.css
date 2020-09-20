@@ -4,13 +4,13 @@
     height: 28px;
     width: 230px;
 
+    margin: 0 auto;
+
     border: 0;
     padding: 0 10px 0 10px;
 
     font-size: 15px;
     background-color: rgba(51, 51, 51, 0.2);
-
-    justify-self: center;
 }
 
 .searchinput::-webkit-input-placeholder {
@@ -25,13 +25,14 @@
 
 .header {
     display: flex;
-    justify-content: space-between;
+    margin: 0 30px;
+    min-width: 350px;
+
     align-items: center;
-    margin: 0 30px 0 30px;
 } 
 
 
-input:focus {
+.searchinput:focus {
     outline: none;
     box-shadow: 0 0 0 2px white, 0 0 0 4px grey;
 }
@@ -56,7 +57,8 @@ input:focus {
 .navigation {
     display: flex;
     justify-content: center;
-    margin: 0 30px 15px 30px;
+    min-width: 350px;
+    margin: 0 auto;
 }
 
 .navpoint {
