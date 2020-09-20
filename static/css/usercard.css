@@ -17,7 +17,9 @@
     margin: 0 0 10px 10px
 }
 
-.usercard h3, h2, span {
+.usercard h3, 
+.usercard h2, 
+.usercard span {
     color: white;
 
     margin-left: 5px;
