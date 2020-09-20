@@ -236,39 +236,13 @@ function createProfile(data) {
                 <img src="assets/pen.svg" class="editicon">
             </div>
             <hr>
-            <div class="socialnetworks">
-                <div class="iconwithtext">
-                    <img src="assets/vk.png" class="networkicon">
-                    <a href="" class="link">Александр Лукашенко</a>
-                </div>
-                <div class="iconwithtext">
-                    <img src="assets/telegram.png" class="networkicon">
-                    <a href="" class="link">Alexander Lukashenko</a>
-                </div>
-            </div>
+            <div class="socialnetworks"></div>
             <hr>
             <div class="iconwithtext">
                 <img src="assets/arrow.svg" class="networkicon">
                 <span class="bold">Мероприятия</span>
             </div>
-            <div class="metings">
-                <div class="iconwithtext">
-                    <img src="assets/vk.png" class="meticon">
-                    <a href="" class="link">Somename</a>
-                </div>
-                <div class="iconwithtext">
-                    <img src="assets/telegram.png" class="meticon">
-                    <a href="" class="link">Somename</a>
-                </div>
-                <div class="iconwithtext">
-                    <img src="assets/vk.png" class="meticon">
-                    <a href="" class="link">Somename</a>
-                </div>
-                <div class="iconwithtext">
-                    <img src="assets/telegram.png" class="networkicon">
-                    <a href="" class="link">Somename</a>
-                </div>
-            </div>
+            <div class="metings"></div>
         </div>
         <div class="rightcolumn">
             <div class="iconwithtext">
