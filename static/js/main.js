@@ -128,7 +128,6 @@ function createMetCard(data) {
         labels.appendChild(label);
     });
 
-
     return tmp.firstElementChild;
 }
 
@@ -317,7 +316,6 @@ function createProfile(data) {
     `;
 
     const metings = tmp.getElementsByClassName('metings')[0];
-    console.log(metings);
     data.metings.forEach(meet => {
         const iconwithtext = document.createElement('div');
         iconwithtext.classList.add('iconwithtext');
@@ -414,10 +412,9 @@ createMetPage();
 
 application.addEventListener('click', (evt) => {
     const {target} = evt;
-    evt.preventDefault();
-    console.log(target.dataset.section);
-    appConfig[target.dataset.section].open();
-    /*if (target instanceof HTMLAnchorElement) {
+
+    if (target.dataset.section in appConfig) {
+        evt.preventDefault();
         appConfig[target.dataset.section].open();
-    }*/
- });
+    }
+});
