@@ -1,0 +1,27 @@
+{
+  "name": "layout",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "static-livereload --path static",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "graceful-fs": "^4.2.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AleksMVP/layout.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AleksMVP/layout/issues"
+  },
+  "homepage": "https://github.com/AleksMVP/layout#readme",
+  "dependencies": {
+    "graceful-fs": "^4.2.4",
+    "static-livereload": "^0.1.4"
+  }
+}
