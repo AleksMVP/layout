@@ -1,3 +1,5 @@
+"use strict";
+
 const application = document.body;
 const head = document.head;
 
@@ -107,7 +109,7 @@ function createNavigation() {
 function createMetCard(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
-        <div class="metcard">
+        <div class="metcard" id="${data.cardId}metcard">
             <img src="${data.imgSrc}" class="metimg">
             <div class="swimblock top">
                 <span>${data.text}</span>
@@ -135,7 +137,7 @@ function createMetCard(data) {
 function createUserCard(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
-        <div class="usercard">
+        <div class="usercard" id="${data.cardId}usercard">
             <img src="${data.imgSrc}" class="overlay">
             <div class="overlay"></div>
             <div class="wraper top">
@@ -180,21 +182,16 @@ function createMetPage() {
     const main = document.createElement('main');
     main.classList.add('main');
 
-    for (let i = 0; i < 10; i++) {
-        main.appendChild(createMetCard({
-            text: `Lorem ipsum dolor sit amet,
-                   consectetur adipiscing elit, sed
-                   do eiusmod tempor incididunt ut
-                   labore et dolore magna aliqua.
-                   Ut enim ad minim veniam, quis
-                   nostrud exercitation ullamco labori`,
-            imgSrc: 'assets/paris.jpg',
-            labels: ['Rust', 'Забив', 'В падике'],
-            title: 'Забив с++',
-            place: 'Дом Пушкина, улица Калатушкина',
-            date: '12 сентября 2020',
-        }));
-    }
+    ajax('POST', '/ajax/metings', (status, responseText) => {
+        console.log("hello world");
+        if (status !== 200) {
+            return;
+        }
+        let data = JSON.parse(responseText);
+        for (let i = 0; i < 10; i++) {
+            main.appendChild(createMetCard(data));
+        }
+    }, {id: 5});
 
     application.appendChild(main);
 }
@@ -207,15 +204,16 @@ function createPeoplesPage() {
     const main = document.createElement('main');
     main.classList.add('main');
 
-    for (let i = 0; i < 10; i++) {
-        main.appendChild(createUserCard({
-            imgSrc: 'assets/luckash.jpeg',
-            name: 'Александр',
-            job: 'Главный чекист КГБ',
-            interestings: ['Картофель', 'Хоккей'],
-            skills: ['Разгон митингов', 'Сбор урожая'],
-        }));
-    }
+    ajax('POST', '/ajax/peoples', (status, responseText) => {
+        if (status !== 200) {
+            return;
+        }
+
+        let data = JSON.parse(responseText);
+        for (let i = 0; i < 10; i++) {
+            main.appendChild(createUserCard(data));
+        }
+    }, {id: 5});
 
     application.appendChild(main);
 }
@@ -330,16 +328,37 @@ function createProfile(data) {
     return tmp.firstElementChild;
 }
 
+function ajax(method, url, callback, body=null) {
+    const xhr = new XMLHttpRequest();
+    xhr.open(method, url, true);
+    xhr.withCredentials = true;
+
+    xhr.addEventListener('readystatechange', function() {
+        if (xhr.readyState !== XMLHttpRequest.DONE) return;
+
+        callback(xhr.status, xhr.responseText);
+    });
+
+    if (body) {
+        xhr.setRequestHeader('Content-type', 'application/json; charset=utf8');
+        xhr.send(JSON.stringify(body));
+        return;
+    }
+
+    xhr.send();
+}
+
 function createProfilePage() {
     application.innerHTML = '';
     createHeader();
+
     application.appendChild(createProfile({
         imgSrc: 'assets/luckash.jpeg',
         name: 'Александр Лукашенко',
         city: 'Пертрозаводск',
         networks: [
             {
-                imgSrc: 'assets/vk.png',
+                imgSrc: 'assets/telegram.png',
                 text: 'Александр Лукашенко',
             },
             {
@@ -353,7 +372,7 @@ function createProfilePage() {
                 text: 'Александр Лукашенко',
             },
             {
-                imgSrc: 'assets/vk.png',
+                imgSrc: 'assets/telegram.png',
                 text: 'Александр Лукашенко',
             },
         ],
