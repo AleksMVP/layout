@@ -192,7 +192,7 @@ function createPeoplesPage() {
 function createProfile(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
-    <main class="main">
+    <main class="profilemain">
         <div class="leftcolumn">
             <img src="${data.imgSrc}" class="avatar">
             <div class="iconwithtext">

@@ -14,7 +14,6 @@
 }
 
 .searchinput::-webkit-input-placeholder {
-    font-family: 'Roboto', sans-serif;
     color: rgb(99, 97, 97);
     text-align: center;
 }
@@ -25,10 +24,12 @@
 
 .header {
     display: flex;
+    align-items: center;
+
     margin: 0 30px;
     min-width: 350px;
 
-    align-items: center;
+    font-family: 'Roboto', sans-serif;
 } 
 
 .searchinput:focus {
@@ -58,13 +59,14 @@
     justify-content: center;
     min-width: 350px;
     margin: 0 auto;
+    
+    font-family: 'Roboto', sans-serif;
 }
 
 .navpoint {
     margin: 0 10px 0 10px;
     border-radius: 100px;
     padding: 5px 10px 5px 10px;
-    font-family: 'Roboto', sans-serif;
     color: rgb(99, 97, 97);
     outline: none;
     text-decoration: none;
