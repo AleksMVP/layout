@@ -1,29 +1,7 @@
-"use strict";
+'use strict';
 
 const application = document.body;
 const head = document.head;
-
-const cssHrefs = {
-    header: [
-        'css/header.css',
-    ],
-    navigation: [
-        'css/header.css',
-    ],
-    metcard: [
-        'css/metcard.css',
-        'css/main.css',
-    ],
-    main: [
-        'css/main.css',
-    ],
-    usercard: [
-        'css/usercard.css',
-    ],
-    profile: [
-        'css/profile.css',
-    ]
-}
 
 const appConfig = {
     forMe: {
@@ -106,6 +84,16 @@ function createNavigation() {
     application.appendChild(navigation);
 }
 
+const wrapCreateChipsFunc = parentNode => {
+    return  labelText => {
+        const label = document.createElement('span');
+        label.classList.add('chips');
+        label.innerHTML = labelText;
+
+        parentNode.appendChild(label);
+    };
+};
+
 function createMetCard(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
@@ -122,17 +110,10 @@ function createMetCard(data) {
     `;
 
     const labels = tmp.getElementsByClassName('tabels')[0];
-    data.labels.forEach(labelText => {
-        const label = document.createElement('span');
-        label.classList.add('chips');
-        label.innerHTML = labelText;
-
-        labels.appendChild(label);
-    });
+    data.labels.forEach(wrapCreateChipsFunc(labels));
 
     return tmp.firstElementChild;
 }
-
 
 function createUserCard(data) {
     const tmp = document.createElement('div');
@@ -150,26 +131,14 @@ function createUserCard(data) {
                 <h3>Навыки</h3>
                 <div class="tabels"></div>
             </div>
-        </div>`;
+        </div>
+    `;
 
     const interestings = tmp.getElementsByClassName('tabels')[0];
-    data.interestings.forEach(labelText => {
-        const label = document.createElement('span');
-        label.classList.add('chips');
-        label.innerHTML = labelText;
-
-        interestings.appendChild(label);
-    });
+    data.interestings.forEach(wrapCreateChipsFunc(interestings));
 
     const skills = tmp.getElementsByClassName('tabels')[1];
-    data.skills.forEach(labelText => {
-        const label = document.createElement('span');
-        label.classList.add('chips');
-        label.innerHTML = labelText;
-
-        skills.appendChild(label);
-    });
-
+    data.skills.forEach(wrapCreateChipsFunc(skills));
     
     return tmp.firstElementChild;
 }
@@ -183,15 +152,14 @@ function createMetPage() {
     main.classList.add('main');
 
     ajax('POST', '/ajax/metings', (status, responseText) => {
-        console.log("hello world");
         if (status !== 200) {
             return;
         }
-        let data = JSON.parse(responseText);
-        for (let i = 0; i < 10; i++) {
-            main.appendChild(createMetCard(data));
+        let cards = JSON.parse(responseText);
+        for (let i = 0; i < cards.length; i++) {
+            main.appendChild(createMetCard(cards[i]));
         }
-    }, {id: 5});
+    }, {pageNum: 1});
 
     application.appendChild(main);
 }
@@ -208,12 +176,16 @@ function createPeoplesPage() {
         if (status !== 200) {
             return;
         }
+        
+        const cards = JSON.parse(responseText);
+        for (let i = 0; i < cards.length; i++) {
+            if (status !== 200) {
+                return;
+            }
 
-        let data = JSON.parse(responseText);
-        for (let i = 0; i < 10; i++) {
-            main.appendChild(createUserCard(data));
+            main.appendChild(createUserCard(cards[i]));
         }
-    }, {id: 5});
+    }, {pageNum: 1});
 
     application.appendChild(main);
 }
@@ -287,43 +259,31 @@ function createProfile(data) {
     </main>
     `;
 
+    const func = parentItem => {
+        return obj => {
+            const iconwithtext = document.createElement('div');
+            iconwithtext.classList.add('iconwithtext');
+
+            const img = document.createElement('img');
+            img.src = obj.imgSrc;
+            img.classList.add('networkicon');
+
+            const link = document.createElement('a');
+            link.classList.add('link');
+            link.innerHTML = obj.text;
+
+            iconwithtext.appendChild(img);
+            iconwithtext.appendChild(link);
+            
+            parentItem.appendChild(iconwithtext);
+        };
+    };
+
     const metings = tmp.getElementsByClassName('metings')[0];
-    data.metings.forEach(meet => {
-        const iconwithtext = document.createElement('div');
-        iconwithtext.classList.add('iconwithtext');
-
-        const meetImg = document.createElement('img');
-        meetImg.src = meet.imgSrc;
-        meetImg.classList.add('networkicon');
-
-        const meetLink = document.createElement('a');
-        meetLink.classList.add('link');
-        meetLink.innerHTML = meet.text;
-
-        iconwithtext.appendChild(meetImg);
-        iconwithtext.appendChild(meetLink);
-        
-        metings.appendChild(iconwithtext);
-    });
+    data.metings.forEach(func(metings));
 
     const networks = tmp.getElementsByClassName('socialnetworks')[0];
-    data.networks.forEach(network => {
-        const iconwithtext = document.createElement('div');
-        iconwithtext.classList.add('iconwithtext');
-
-        const meetImg = document.createElement('img');
-        meetImg.src = network.imgSrc;
-        meetImg.classList.add('networkicon');
-
-        const meetLink = document.createElement('a');
-        meetLink.classList.add('link');
-        meetLink.innerHTML = network.text;
-
-        iconwithtext.appendChild(meetImg);
-        iconwithtext.appendChild(meetLink);
-        
-        networks.appendChild(iconwithtext);
-    });
+    data.networks.forEach(func(networks));
 
     return tmp.firstElementChild;
 }
@@ -351,54 +311,14 @@ function ajax(method, url, callback, body=null) {
 function createProfilePage() {
     application.innerHTML = '';
     createHeader();
+    ajax('POST', '/ajax/user', (status, responseText) => {
+        if (status !== 200) {
+            return;
+        }
 
-    application.appendChild(createProfile({
-        imgSrc: 'assets/luckash.jpeg',
-        name: 'Александр Лукашенко',
-        city: 'Пертрозаводск',
-        networks: [
-            {
-                imgSrc: 'assets/telegram.png',
-                text: 'Александр Лукашенко',
-            },
-            {
-                imgSrc: 'assets/vk.png',
-                text: 'Александр Лукашенко',
-            },
-        ],
-        metings: [
-            {
-                imgSrc: 'assets/vk.png',
-                text: 'Александр Лукашенко',
-            },
-            {
-                imgSrc: 'assets/telegram.png',
-                text: 'Александр Лукашенко',
-            },
-        ],
-        interestings: `
-                    Lorem ipsum dolor sit amet, 
-                    consectetur adipiscing elit, sed 
-                    do eiusmod tempor incididunt ut 
-                    labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis 
-                    nostrud exercitation ullamco 
-                    laboris nisi ut aliquip ex ea 
-                    commodo consequat. Duis aute 
-                    irure dolor in reprehenderit 
-                    in voluptate velit esse cillum 
-        `,
-        skills: `Lorem ipsum dolor sit amet, 
-                consectetur adipiscing elit, sed 
-                do eiusmod tempor incididunt ut 
-                labore et dolore magna aliqua. 
-                Ut enim ad minim veniam, quis 
-                nostrud exercitation ullamco 
-        `,
-        education: 'МГТУ им. Н. Э. Баумана до 2010',
-        job: 'MAIL GROUP до 2008',
-        aims: 'Хочу от жизни всего',
-    }));
+        let data = JSON.parse(responseText);
+        application.appendChild(createProfile(data.userInfo));
+    }, {userId: 1});
 }
 
 createMetPage();

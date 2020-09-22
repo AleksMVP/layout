@@ -12,61 +12,19 @@ app.use(express.static(path.resolve(__dirname, '..', 'static')));
 app.use(body.json());
 app.use(cookie());
 
-app.post('/signup', function (req, res) {
-  const password = req.body.password;
-  const email = req.body.email;
-  const age = req.body.age;
-  if (
-      !password || !email || !age ||
-      !password.match(/^\S{4,}$/) ||
-      !email.match(/@/) ||
-      !(typeof age === 'number' && age > 10 && age < 100)
-  ) {
-    return res.status(400).json({error: 'Не валидные данные пользователя'});
-  }
-  if (users[email]) {
-    return res.status(400).json({error: 'Пользователь уже существует'});
-  }
-  const id = 1;
-  const user = {password, email, age, score: 0, images: []};
-  ids[id] = email;
-  users[email] = user;
-
-  res.cookie('podvorot', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
-  res.status(201).json({id});
-});
-
-app.post('/ajax/peoples', function (req, res) {
-    const userId = req.body.id;
-
-    res.status(200).json({
+const userCards = {
+    '51': {
         cardId: 51,
         imgSrc: 'assets/luckash.jpeg',
         name: 'Александр',
         job: 'Главный чекист КГБ',
         interestings: ['Картофель', 'Хоккей'],
         skills: ['Разгон митингов', 'Сбор урожая'],
-    });
-    return;
-  const password = req.body.password;
-  const email = req.body.email;
-  if (!password || !email) {
-    return res.status(400).json({error: 'Не указан E-Mail или пароль'});
-  }
-  if (!users[email] || users[email].password !== password) {
-    return res.status(400).json({error: 'Не верный E-Mail и/или пароль'});
-  }
+    },
+};
 
-  const id = 1
-  ids[id] = email;
-
-  res.cookie('podvorot', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
-  res.status(200).json({id});
-});
-
-app.post('/ajax/metings', function (req, res) {
-    const metId = req.userId;
-    res.status(200).json({
+const meetCards = {
+    '52': {
         cardId: 52,
         text: `Lorem ipsum dolor sit amet,
                consectetur adipiscing elit, sed
@@ -79,34 +37,129 @@ app.post('/ajax/metings', function (req, res) {
         title: 'Забив с++',
         place: 'Дом Пушкина, улица Калатушкина',
         date: '12 сентября 2020',
-    });
-    return;
-  const password = req.body.password;
-  const email = req.body.email;
-  if (!password || !email) {
-    return res.status(400).json({error: 'Не указан E-Mail или пароль'});
-  }
-  if (!users[email] || users[email].password !== password) {
-    return res.status(400).json({error: 'Не верный E-Mail и/или пароль'});
-  }
+    },
+};
 
-  const id = 1
-  ids[id] = email;
+const usersProfiles = {
+    '1': {
+        imgSrc: 'assets/luckash.jpeg',
+        name: 'Александр Лукашенко',
+        city: 'Пертрозаводск',
+        networks: [
+            {
+                imgSrc: 'assets/telegram.png',
+                text: 'Александр Лукашенко',
+            },
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+        ],
+        metings: [
+            {
+                imgSrc: 'assets/vk.png',
+                text: 'Александр Лукашенко',
+            },
+            {
+                imgSrc: 'assets/telegram.png',
+                text: 'Александр Лукашенко',
+            },
+        ],
+        interestings: `
+                    Lorem ipsum dolor sit amet, 
+                    consectetur adipiscing elit, sed 
+                    do eiusmod tempor incididunt ut 
+                    labore et dolore magna aliqua. 
+                    Ut enim ad minim veniam, quis 
+                    nostrud exercitation ullamco 
+                    laboris nisi ut aliquip ex ea 
+                    commodo consequat. Duis aute 
+                    irure dolor in reprehenderit 
+                    in voluptate velit esse cillum 
+        `,
+        skills: `Lorem ipsum dolor sit amet, 
+                consectetur adipiscing elit, sed 
+                do eiusmod tempor incididunt ut 
+                labore et dolore magna aliqua. 
+                Ut enim ad minim veniam, quis 
+                nostrud exercitation ullamco 
+        `,
+        education: 'МГТУ им. Н. Э. Баумана до 2010',
+        job: 'MAIL GROUP до 2008',
+        aims: 'Хочу от жизни всего',
+    },
+}
 
-  res.cookie('podvorot', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
-  res.status(200).json({id});
+
+
+app.post('/signup', function (req, res) {
+    const password = req.body.password;
+    const email = req.body.email;
+    const age = req.body.age;
+    if (
+        !password || !email || !age ||
+        !password.match(/^\S{4,}$/) ||
+        !email.match(/@/) ||
+        !(typeof age === 'number' && age > 10 && age < 100)
+    ) {
+        return res.status(400).json({error: 'Не валидные данные пользователя'});
+    }
+    if (users[email]) {
+        return res.status(400).json({error: 'Пользователь уже существует'});
+    }
+    const id = 1;
+    const user = {password, email, age, score: 0, images: []};
+    ids[id] = email;
+    users[email] = user;
+
+    res.cookie('podvorot', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
+    res.status(201).json({id});
 });
 
-app.get('/me', function (req, res) {
-  const id = req.cookies['podvorot'];
-  const email = ids[id];
-  if (!email || !users[email]) {
-    return res.status(401).end();
-  }
+app.get('/helloworld', function(req, res) {
+    const id = 1;
+    res.cookie('id', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
+    res.status(201).json({id});
+});
 
-  users[email].score += 1;
+app.post('/ajax/peoples', function (req, res) {
+    const userId = req.cookies['id'];
+    const pageNum = req.body.pageNum;
 
-  res.json(users[email]);
+    let users = [];
+    for (let i = 0; i < 100; i++) {
+        users.push(userCards[51]);
+    }
+    res.status(200).json(users);
+});
+
+app.post('/ajax/metings', function (req, res) {
+    const userId = req.cookies['id'];
+    const pageNum = req.body.pageNum;
+
+    let meets = [];
+    for (let i = 0; i < 100; i++) {
+        meets.push(meetCards[52]);
+    }
+    res.status(200).json(meets);
+});
+
+app.post('/ajax/user', function(req, res) {
+    const userId = req.body.userId;
+    const ownId = req.cookies['id'];
+
+    if (userId in usersProfiles) {
+        res.status(200).json({
+            userInfo: usersProfiles[userId],
+            ownId: ownId,
+        });
+    } else {
+        res.status(404);  
+    }
+});
+ 
+app.get('/ajax/me', function (req, res) {
+  res.status(200).json();
 });
 
 const port = process.env.PORT || 8000;
