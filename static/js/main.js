@@ -79,7 +79,6 @@ function createNavigation() {
 
         navigation.appendChild(navPoint);
     });
-
     
     application.appendChild(navigation);
 }
@@ -193,7 +192,7 @@ function createPeoplesPage() {
 function createProfile(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
-    <main>
+    <main class="main">
         <div class="leftcolumn">
             <img src="${data.imgSrc}" class="avatar">
             <div class="iconwithtext">
@@ -218,7 +217,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/diamond.svg" class="meticon">
                 <span class="bold">Навыки</span>
-                <img src="assets/pen.svg" class="editicon">
+                <img src="assets/pen.svg" class="editicon" id="skillsimg">
             </div>
             <span class="margin10" id="skills">
                 ${data.skills}
@@ -226,7 +225,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/search.svg" class="meticon">
                 <span class="bold">Интересы</span>
-                <img src="assets/pen.svg" class="editicon">
+                <img src="assets/pen.svg" class="editicon" id="interestingsimg">
             </div>
             <span class="margin10" id="interesting">
                 ${data.interestings}
@@ -234,7 +233,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/education.svg" class="meticon">
                 <span class="bold">Образование</span>
-                <img src="assets/pen.svg" class="editicon">
+                <img src="assets/pen.svg" class="editicon" id="educationimg">
             </div>
             <span class="margin10" id="education">
                 ${data.education}
@@ -242,7 +241,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/job.svg" class="meticon">
                 <span class="bold">Карьера</span>
-                <img src="assets/pen.svg" class="editicon">
+                <img src="assets/pen.svg" class="editicon" id="jobid">
             </div>
             <span class="margin10" id="job">  
                 ${data.job}
@@ -250,7 +249,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/aim.svg" class="meticon">
                 <span class="bold">Цели</span>
-                <img src="assets/pen.svg" class="editicon">
+                <img src="assets/pen.svg" class="editicon" id="aimsid">
             </div>
             <span class="margin10" id="aims">  
                 ${data.aims}
@@ -318,7 +317,21 @@ function createProfilePage() {
 
         let data = JSON.parse(responseText);
         application.appendChild(createProfile(data.userInfo));
-    }, {userId: 1});
+
+        document.getElementById('skillsimg').addEventListener('click', (evt) => {
+            console.log('hello')
+            const mainText = document.getElementById('skills');
+            
+            const input = document.createElement('textarea');
+            input.innerHTML = mainText.innerHTML;
+            input.rows = '10';
+            input.cols = '10';
+
+            mainText.parentNode.insertBefore(input, mainText.nextSibling);
+            mainText.remove();
+        });
+
+    }, {userId: 52});
 }
 
 createMetPage();

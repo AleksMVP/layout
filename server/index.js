@@ -41,7 +41,7 @@ const meetCards = {
 };
 
 const usersProfiles = {
-    '1': {
+    '52': {
         imgSrc: 'assets/luckash.jpeg',
         name: 'Александр Лукашенко',
         city: 'Пертрозаводск',
@@ -88,39 +88,13 @@ const usersProfiles = {
         job: 'MAIL GROUP до 2008',
         aims: 'Хочу от жизни всего',
     },
-}
+};
 
-
-
-app.post('/signup', function (req, res) {
-    const password = req.body.password;
-    const email = req.body.email;
-    const age = req.body.age;
-    if (
-        !password || !email || !age ||
-        !password.match(/^\S{4,}$/) ||
-        !email.match(/@/) ||
-        !(typeof age === 'number' && age > 10 && age < 100)
-    ) {
-        return res.status(400).json({error: 'Не валидные данные пользователя'});
-    }
-    if (users[email]) {
-        return res.status(400).json({error: 'Пользователь уже существует'});
-    }
-    const id = 1;
-    const user = {password, email, age, score: 0, images: []};
-    ids[id] = email;
-    users[email] = user;
-
-    res.cookie('podvorot', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
-    res.status(201).json({id});
-});
-
-app.get('/helloworld', function(req, res) {
+/*app.get('/helloworld', function(req, res) {
     const id = 1;
     res.cookie('id', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
     res.status(201).json({id});
-});
+});*/
 
 app.post('/ajax/peoples', function (req, res) {
     const userId = req.cookies['id'];
@@ -158,10 +132,6 @@ app.post('/ajax/user', function(req, res) {
     }
 });
  
-app.get('/ajax/me', function (req, res) {
-  res.status(200).json();
-});
-
 const port = process.env.PORT || 8000;
 
 app.listen(port, function () {
