@@ -22,7 +22,11 @@ const cssHrefs = {
     ],
     profile: [
         'css/profile.css',
-    ]
+    ],
+    login: [
+        'css/login.css',
+    ],
+
 }
 
 const appConfig = {
@@ -48,10 +52,12 @@ const appConfig = {
     registration: {
         text: "Регистрация",
         href: "/registration",
+        open: signUpPage,
     },
     login: {
         text: "Логин",
         href: "/login",
+        open: loginPage,
     }
 }
 
@@ -62,6 +68,85 @@ function addCSS(elemName) {
         link.rel = 'stylesheet'
         head.appendChild(link);
     });
+}
+
+function signUpPage() {
+    console.log('signup');
+}
+
+function createLabeledInput(labelName, type, text, name) {
+    const label = document.createElement('label');
+    label.textContent = labelName;
+
+    const innerDiv = document.createElement('div');
+    const input = document.createElement('input');
+    input.type = type;
+    input.name = name;
+    input.placeholder = text;
+
+    innerDiv.appendChild(input);
+
+    label.appendChild(innerDiv);
+
+    return label
+}
+
+function loginPage() {
+    addCSS('login');
+
+    const div = document.createElement('div');
+    div.classList.add('login');
+
+    const form = document.createElement('form');
+    const main = document.createElement('main');
+    const footer = document.createElement('footer');
+
+    const loginInput = createLabeledInput('Логин', 'text', 'телефон или email', 'login');
+    const pwdInput = createLabeledInput('Пароль', 'password', 'пароль', 'password');
+    main.appendChild(loginInput);
+    main.appendChild(pwdInput);
+
+    const submitBtn = document.createElement('button');
+    const p = document.createElement('p');
+    submitBtn.type = 'submit';
+    submitBtn.textContent = 'Войти';
+    p.innerHTML =
+        `Нету аккаунта? 
+        <a href="${appConfig.registration.href}" data-section="registration">
+            Зарегестрироваться
+        </a>`;
+    p.classList.add('message');
+    footer.appendChild(submitBtn);
+    footer.appendChild(p);
+
+    form.appendChild(main);
+    form.appendChild(footer);
+    div.appendChild(form);
+
+    form.addEventListener('submit', (evt) => {
+        evt.preventDefault();
+
+        let input = document.getElementsByName('login')[0];
+        const login = input.value.trim();
+
+        input = document.getElementsByName('password')[0];
+        const password = input.value.trim();
+
+        ajax('POST',
+            '/login',
+            (status, response) => {
+              if (status === 200) {
+                  createProfilePage();
+              } else {
+                  const {error} = JSON.parse(response);
+                  alert(error);
+              }
+            },
+            {login, password},
+            )
+    })
+
+    application.appendChild(div);
 }
 
 function createHeader() {
@@ -350,33 +435,47 @@ function ajax(method, url, callback, body=null) {
 
 function createProfilePage() {
     application.innerHTML = '';
-    createHeader();
 
-    application.appendChild(createProfile({
-        imgSrc: 'assets/luckash.jpeg',
-        name: 'Александр Лукашенко',
-        city: 'Пертрозаводск',
-        networks: [
-            {
-                imgSrc: 'assets/telegram.png',
-                text: 'Александр Лукашенко',
-            },
-            {
-                imgSrc: 'assets/vk.png',
-                text: 'Александр Лукашенко',
-            },
-        ],
-        metings: [
-            {
-                imgSrc: 'assets/vk.png',
-                text: 'Александр Лукашенко',
-            },
-            {
-                imgSrc: 'assets/telegram.png',
-                text: 'Александр Лукашенко',
-            },
-        ],
-        interestings: `
+    ajax('GET', '/me', (status, responseText) => {
+       let isAuthorized = false;
+
+       if (status === 200) {
+           isAuthorized = true;
+       }
+
+        if (status === 401) {
+            isAuthorized = false;
+        }
+
+        if (isAuthorized) {
+            const responseBody = JSON.parse(responseText);
+            createHeader();
+            createNavigation();
+            application.appendChild(createProfile({
+                imgSrc: 'assets/luckash.jpeg',
+                name: 'Александр Лукашенко',
+                city: 'Пертрозаводск',
+                networks: [
+                    {
+                        imgSrc: 'assets/telegram.png',
+                        text: 'Александр Лукашенко',
+                    },
+                    {
+                        imgSrc: 'assets/vk.png',
+                        text: 'Александр Лукашенко',
+                    },
+                ],
+                metings: [
+                    {
+                        imgSrc: 'assets/vk.png',
+                        text: 'Александр Лукашенко',
+                    },
+                    {
+                        imgSrc: 'assets/telegram.png',
+                        text: 'Александр Лукашенко',
+                    },
+                ],
+                interestings: `
                     Lorem ipsum dolor sit amet, 
                     consectetur adipiscing elit, sed 
                     do eiusmod tempor incididunt ut 
@@ -388,17 +487,25 @@ function createProfilePage() {
                     irure dolor in reprehenderit 
                     in voluptate velit esse cillum 
         `,
-        skills: `Lorem ipsum dolor sit amet, 
+                skills: `Lorem ipsum dolor sit amet, 
                 consectetur adipiscing elit, sed 
                 do eiusmod tempor incididunt ut 
                 labore et dolore magna aliqua. 
                 Ut enim ad minim veniam, quis 
                 nostrud exercitation ullamco 
         `,
-        education: 'МГТУ им. Н. Э. Баумана до 2010',
-        job: 'MAIL GROUP до 2008',
-        aims: 'Хочу от жизни всего',
-    }));
+                education: 'МГТУ им. Н. Э. Баумана до 2010',
+                job: 'MAIL GROUP до 2008',
+                aims: 'Хочу от жизни всего',
+            }));
+
+            return;
+        }
+
+        alert('АХТУНГ, нет авторизации');
+        loginPage();
+    });
+
 }
 
 createMetPage();
@@ -408,6 +515,7 @@ application.addEventListener('click', (evt) => {
 
     if (target.dataset.section in appConfig) {
         evt.preventDefault();
+        console.log(appConfig[target.dataset.section])
         appConfig[target.dataset.section].open();
     }
 });

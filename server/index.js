@@ -4,6 +4,7 @@ const express = require('express');
 const body = require('body-parser');
 const cookie = require('cookie-parser');
 const morgan = require('morgan');
+const uuid = require('uuid/v4');
 const path = require('path');
 const app = express();
 
@@ -11,6 +12,15 @@ app.use(morgan('dev'));
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
 app.use(body.json());
 app.use(cookie());
+
+const users = {
+    'luka@mail.ru': {
+        login: 'luka@mail.ru',
+        password: '123',
+    },
+}
+const ids = {};
+
 
 app.post('/signup', function (req, res) {
   const password = req.body.password;
@@ -97,16 +107,32 @@ app.post('/ajax/metings', function (req, res) {
   res.status(200).json({id});
 });
 
+app.post('/login', function (req, res) {
+    console.log('POST /login');
+
+    const password = req.body.password;
+    const login = req.body.login;
+    if (!password || !login) {
+        return res.status(400).json({error: 'Не указан E-Mail или пароль'});
+    }
+    if (!users[login] || users[login].password !== password) {
+        return res.status(400).json({error: 'Не верный E-Mail и/или пароль'});
+    }
+
+    const id = uuid();
+    ids[id] = login;
+    res.cookie('authToken', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
+    res.status(200).json({id});
+});
+
 app.get('/me', function (req, res) {
-  const id = req.cookies['podvorot'];
-  const email = ids[id];
-  if (!email || !users[email]) {
+  const id = req.cookies['authToken'];
+  const login = ids[id];
+  if (!login || !users[login]) {
     return res.status(401).end();
   }
 
-  users[email].score += 1;
-
-  res.json(users[email]);
+  res.json(users[login]);
 });
 
 const port = process.env.PORT || 8000;
