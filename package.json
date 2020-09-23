@@ -1,19 +1,24 @@
 {
   "name": "html-css",
   "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "start": "node server/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AleksMVP/layout.git"
+  },
   "author": "",
   "license": "ISC",
-  "keywords": [],
-  "description": "",
+  "bugs": {
+    "url": "https://github.com/AleksMVP/layout/issues"
+  },
+  "homepage": "https://github.com/AleksMVP/layout#readme",
   "dependencies": {
     "cookie-parser": "^1.4.5",
-    "graceful-fs": "^4.2.4",
-    "morgan": "^1.10.0",
-    "static-livereload": "^0.1.4",
-    "uuid": "^8.3.0"
+    "express": "^4.17.1",
+    "morgan": "^1.10.0"
   }
 }
