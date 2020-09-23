@@ -6,11 +6,21 @@ const cookie = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
 const app = express();
+const fs = require('fs');
 
 app.use(morgan('dev'));
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
 app.use(body.json());
 app.use(cookie());
+
+app.get('/', function(req, res) {
+    fs.readFile('static/index.html', function (err, html) {
+        if (err) {
+            throw err; 
+        } 
+        res.status(200).send(html);
+    });
+});
 
 const userCards = {
     '51': {
