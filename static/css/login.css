@@ -1,23 +1,23 @@
-body {
+.login body {
     font-family: monospace, Helvetica, sans-serif;
 }
 
-input {
+.login input {
     font-family: monospace, Helvetica, sans-serif;
 }
 
-.content {
+.login {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
 }
 
-.content wrapper-form {
+.login wrapper-form {
     margin: auto;
 }
 
-form {
+.login form {
     display: flex;
     flex-direction: column;
     width: 320px;
@@ -26,7 +26,7 @@ form {
     padding: 12px 20px 20px;
 }
 
-form input{
+.login form input{
     margin: 12px 10px 20px 0;
     padding: 5px 8px;
     font-weight: 500;
@@ -43,19 +43,21 @@ form input{
     box-sizing: border-box;
 }
 
-form input:focus {
+.login form input:focus {
     box-shadow: 0 0 0 1000px #edf8f6 inset,
     0 0 0px 2px #edf8f6;
     outline: none;
 }
 
-form label {
+.login form label {
     color: #648880;
     cursor: pointer;
-    font-weight: 550;
+    font-weight: 600;
+    font-family: monospace;
+    font-size: 16px;
 }
 
-form button {
+.login form button {
     height: 44px;
     width: 120px;
     font-size: 15px;
@@ -68,15 +70,15 @@ form button {
     cursor: pointer;
 }
 
-form button:hover {
+.login form button:hover {
     background-color: #c7c6c6;
 }
 
-form main {
+.login form main {
     margin-left: 12px;
 }
 
-form footer {
+.login form footer {
     display: flex;
     flex-direction: column;
     justify-items: right;
@@ -84,12 +86,12 @@ form footer {
     margin-left: 12px;
 }
 
-form .message {
+.login form .message {
     margin: 15px 0 0;
     color: #b3b3b3;
     font-size: 12px;
 }
-form .message a {
+.login form .message a {
     color: #4CAF50;
     text-decoration: none;
 }
