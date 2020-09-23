@@ -5,6 +5,7 @@ const body = require('body-parser');
 const cookie = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
+const uuid = require("uuid");
 const app = express();
 
 app.use(morgan('dev'));
@@ -90,6 +91,16 @@ const usersProfiles = {
     },
 };
 
+const userSessions = {};
+const userLoginPwdIdMap = {
+    'lukash@mail.ru': {
+        login: 'lukash@mail.ru',
+        password: '123',
+        id: '52',
+    }
+}
+
+
 /*app.get('/helloworld', function(req, res) {
     const id = 1;
     res.cookie('id', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
@@ -131,7 +142,32 @@ app.post('/ajax/user', function(req, res) {
         res.status(404);  
     }
 });
- 
+
+app.get('/ajax/me', function (req, res) {
+    const token = req.cookies['authToken'];
+    const userId = userSessions[token];
+    if (!userId) {
+       return  res.status(401).end();
+    }
+    res.status(200).json(userId);
+});
+
+app.post('/login', function (req, res) {
+    const password = req.body.password;
+    const login = req.body.login;
+    if (!password || !login) {
+        return res.status(400).json({error: 'Не указан E-Mail или пароль'});
+    }
+    if (!userLoginPwdIdMap[login] || userLoginPwdIdMap[login].password !== password) {
+        return res.status(400).json({error: 'Не верный E-Mail и/или пароль'});
+    }
+
+    const token = uuid();
+    userSessions[token] = userLoginPwdIdMap[login].id;
+    res.cookie('authToken', token, {expires: new Date(Date.now() + 1000 * 60 * 10)});
+    res.status(200).json({token});
+});
+
 const port = process.env.PORT || 8000;
 
 app.listen(port, function () {

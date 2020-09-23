@@ -21,15 +21,17 @@ const appConfig = {
     profile: {
         text: 'Профиль',
         href: '',
-        open: createProfilePage,
+        open: profilePage,
     },
     registration: {
         text: "Регистрация",
         href: "/registration",
+        open: signUpPage,
     },
     login: {
         text: "Логин",
         href: "/login",
+        open: loginPage,
     }
 }
 
@@ -315,6 +317,8 @@ function createProfilePage() {
             return;
         }
 
+        createNavigation();
+
         let data = JSON.parse(responseText);
         application.appendChild(createProfile(data.userInfo));
 
@@ -332,6 +336,105 @@ function createProfilePage() {
         });
 
     }, {userId: 52});
+}
+
+function profilePage() {
+    ajax('GET', '/ajax/me', (status, responseText) => {
+        let isAuthorized = false;
+
+        if (status === 200) {
+            isAuthorized = true;
+        }
+
+        if (status === 401) {
+            isAuthorized = false;
+        }
+
+        if (isAuthorized) {
+            createProfilePage();
+            return
+        }
+
+        loginPage();
+    });
+}
+
+function signUpPage() {
+    console.log('signup');
+}
+
+function createLabeledInput(labelName, type, text, name) {
+    const label = document.createElement('label');
+    label.textContent = labelName;
+
+    const innerDiv = document.createElement('div');
+    const input = document.createElement('input');
+    input.type = type;
+    input.name = name;
+    input.placeholder = text;
+
+    innerDiv.appendChild(input);
+
+    label.appendChild(innerDiv);
+
+    return label
+}
+
+function loginPage() {
+    application.innerHTML = '';
+    const div = document.createElement('div');
+    div.classList.add('login');
+
+    const form = document.createElement('form');
+    const main = document.createElement('main');
+    const footer = document.createElement('footer');
+
+    const loginInput = createLabeledInput('Логин', 'text', 'телефон или email', 'login');
+    const pwdInput = createLabeledInput('Пароль', 'password', 'пароль', 'password');
+    main.appendChild(loginInput);
+    main.appendChild(pwdInput);
+
+    const submitBtn = document.createElement('button');
+    const p = document.createElement('p');
+    submitBtn.type = 'submit';
+    submitBtn.textContent = 'Войти';
+    p.innerHTML =
+        `Нету аккаунта? 
+        <a href="${appConfig.registration.href}" data-section="registration">
+            Зарегестрироваться
+        </a>`;
+    p.classList.add('message');
+    footer.appendChild(submitBtn);
+    footer.appendChild(p);
+
+    form.appendChild(main);
+    form.appendChild(footer);
+    div.appendChild(form);
+
+    form.addEventListener('submit', (evt) => {
+        evt.preventDefault();
+
+        let input = document.getElementsByName('login')[0];
+        const login = input.value.trim();
+
+        input = document.getElementsByName('password')[0];
+        const password = input.value.trim();
+
+        ajax('POST',
+            '/login',
+            (status, response) => {
+                if (status === 200) {
+                    createProfilePage();
+                } else {
+                    const {error} = JSON.parse(response);
+                    alert(error);
+                }
+            },
+            {login, password},
+        )
+    })
+
+    application.appendChild(div);
 }
 
 createMetPage();
