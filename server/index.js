@@ -99,12 +99,6 @@ const usersProfiles = {
     },
 };
 
-/*app.get('/helloworld', function(req, res) {
-    const id = 1;
-    res.cookie('id', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
-    res.status(201).json({id});
-});*/
-
 app.post('/ajax/editprofile', function (req, res) {
     console.log(req.body.field);
     console.log(req.body.text);

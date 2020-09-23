@@ -316,6 +316,7 @@ function addListener(id) {
         input.innerHTML = mainText.innerHTML;
         input.rows = '10';
         input.cols = '10';
+        input.classList.add('block');
 
         const checkMark = document.createElement('img');
         checkMark.src = "assets/check-mark.svg";
