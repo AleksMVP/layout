@@ -171,7 +171,7 @@ app.post('/login', function (req, res) {
         return res.status(400).json({error: 'Не верный E-Mail и/или пароль'});
     }
 
-    const token = uuid();
+    const token = uuid.v4();
     userSessions[token] = userLoginPwdIdMap[login].id;
     res.cookie('authToken', token, {expires: new Date(Date.now() + 1000 * 60 * 10)});
     res.status(200).json({token});

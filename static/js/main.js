@@ -361,9 +361,7 @@ function addListener(id) {
             }, {field: id, text: mainText.innerHTML});
         });
 
-        const oldText = mainText.innerHTML;
         crossMark.addEventListener('click', (evt) =>{
-            mainText.innerHTML = oldText;
             input.parentNode.insertBefore(mainText, input.nextSibling);
 
             createPenAndRemoveChecks(checkMark, crossMark, id);
@@ -383,6 +381,7 @@ function addListener(id) {
 function createProfilePage() {
     application.innerHTML = '';
     createHeader();
+
     const fields = ['skills', 'interestings', 'education', 'job', 'aims', 'name', 'city'];
     ajax('POST', '/ajax/user', (status, responseText) => {
         if (status !== 200) {
@@ -414,7 +413,7 @@ function profilePage() {
 
         if (isAuthorized) {
             createProfilePage();
-            return
+            return;
         }
 
         loginPage();
