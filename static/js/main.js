@@ -359,27 +359,6 @@ function profilePage() {
     });
 }
 
-function signUpPage() {
-    console.log('signup');
-}
-
-function createLabeledInput(labelName, type, text, name) {
-    const label = document.createElement('label');
-    label.textContent = labelName;
-
-    const innerDiv = document.createElement('div');
-    const input = document.createElement('input');
-    input.type = type;
-    input.name = name;
-    input.placeholder = text;
-
-    innerDiv.appendChild(input);
-
-    label.appendChild(innerDiv);
-
-    return label
-}
-
 function loginPage() {
     application.innerHTML = '';
     const div = document.createElement('div');
@@ -389,8 +368,10 @@ function loginPage() {
     const main = document.createElement('main');
     const footer = document.createElement('footer');
 
-    const loginInput = createLabeledInput('Логин', 'text', 'телефон или email', 'login');
-    const pwdInput = createLabeledInput('Пароль', 'password', 'пароль', 'password');
+    const loginInput = createLabeledElements('Логин',
+        createInput({type: 'text', placeholder: 'телефон или email', name: 'login'}));
+    const pwdInput = createLabeledElements('Пароль',
+        createInput({type: 'password', placeholder: 'пароль', name: 'password'}));
     main.appendChild(loginInput);
     main.appendChild(pwdInput);
 
@@ -435,6 +416,137 @@ function loginPage() {
     })
 
     application.appendChild(div);
+}
+
+function signUpPage() {
+    application.innerHTML = '';
+
+    const formsBlock = document.createElement('div');
+    formsBlock.classList.add('signup');
+
+    let createColumn = function (options, ...elements) {
+        let col = document.createElement('div');
+        applyOptionsTo(col, options);
+
+        let fieldSet = document.createElement('fieldset');
+
+        elements.forEach((el) => {
+           fieldSet.appendChild(el);
+        });
+
+        col.appendChild(fieldSet);
+
+        return col;
+    }
+
+    const nameInput = createLabeledElements('Имя', createInput(
+        {type: 'text', placeholder: 'Полное имя', name: 'name'}));
+
+    const emailInput = createLabeledElements('Адрес электронной почты', createInput(
+        {type: 'email', placeholder: 'Электронная почта', name: 'email'}));
+    const profilePhotoBtnLabel = createLabeledElements('Фото профиля',
+        createBtn('Загрузить с компьютера', {classList: ['stdBtn', 'activable']}));
+
+    const leftCol = createColumn({classList: ['leftcolumn', 'col-2-3']},
+        nameInput, emailInput, profilePhotoBtnLabel);
+
+    formsBlock.appendChild(leftCol);
+
+    const sexSelectorLabel = createLabeledElements('Пол',
+        createBtn('Мужчина', {classList: ['stdBtn', 'focusable', 'sexBtns'], name: 'maleSelector'}),
+        createBtn('Женщина', {classList: ['stdBtn', 'focusable', 'sexBtns'], name: 'femaleSelector'}),
+    );
+
+    const birthDateLabel = createLabeledElements('День рождения',
+        createInput({classList: ['birthDay'], name: 'day', placeholder: 'ДД'}),
+        createInput({classList: ['birthDay'], name: 'month', placeholder: 'ММ'}),
+        createInput({classList: ['birthDay'], name: 'year', placeholder: 'ГГГГ'}),
+        );
+
+    const cityInput = createLabeledElements('Город', createInput({style: "width: 80%",
+                                                                        name: "city",
+                                                                        placeholder: "Ваш текущий город"}
+                                                                        ));
+
+    const rightCol = createColumn({classList: ['rightcolumn', 'col-1-3']},
+        sexSelectorLabel, birthDateLabel, cityInput);
+    formsBlock.appendChild(rightCol);
+
+    const separator = createLineSeparator('Информация о себе', {classList: ['signup']});
+
+    const persInfoBlock = document.createElement('div');
+    applyOptionsTo(persInfoBlock, {classList: ['signup', 'pers-info-block']});
+
+    const rows = {'Ключевые навыки' : 'Добавить навыки',
+                    'Основные интересы' : 'Добавить интересы',
+                     'Цели' : 'Добавить интересы'};
+
+    const btnOptions = {classList: ['stdBtn', 'secondary', 'activable']}
+
+    Object.keys(rows).forEach((lbl) => {
+        let persInfoRow = document.createElement('div');
+        persInfoRow.classList.add('pers-info-row');
+        persInfoRow.appendChild(createLabeledElements(lbl, createBtn(rows[lbl], btnOptions)));
+        persInfoBlock.appendChild(persInfoRow);
+    });
+
+    application.appendChild(formsBlock);
+    application.appendChild(separator);
+    application.appendChild(persInfoBlock);
+}
+
+function createInput(options) {
+    const input = document.createElement('input');
+    applyOptionsTo(input, options)
+
+    return input;
+}
+
+function createLabeledElements(labelName, ...elements) {
+    const label = document.createElement('label');
+    label.textContent = labelName;
+
+    const innerDiv = document.createElement('div');
+    elements.forEach((el) => {
+        innerDiv.appendChild(el);
+    });
+
+    label.appendChild(innerDiv);
+
+    return label;
+}
+
+function createBtn(text, options) {
+    const btn = document.createElement('button');
+    btn.textContent = text;
+
+    applyOptionsTo(btn, options);
+
+    return btn;
+}
+
+function applyOptionsTo(el, options) {
+    Object.keys(options).forEach((opt) => {
+        switch (opt) {
+            case 'classList':
+                el.classList.add(...options[opt]);
+                break;
+            default :
+                el[opt] = options[opt];
+        }
+    });
+}
+
+function createLineSeparator(text, options) {
+    const sep = document.createElement('div');
+    sep.classList.add('separator');
+
+    if (Object.keys(options).length > 0) {
+        applyOptionsTo(sep, options);
+    }
+
+    sep.textContent = text;
+    return sep;
 }
 
 createMetPage();
