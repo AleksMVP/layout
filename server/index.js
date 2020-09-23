@@ -67,24 +67,23 @@ const usersProfiles = {
             },
         ],
         interestings: `
-                    Lorem ipsum dolor sit amet, 
-                    consectetur adipiscing elit, sed 
-                    do eiusmod tempor incididunt ut 
-                    labore et dolore magna aliqua. 
-                    Ut enim ad minim veniam, quis 
-                    nostrud exercitation ullamco 
-                    laboris nisi ut aliquip ex ea 
-                    commodo consequat. Duis aute 
-                    irure dolor in reprehenderit 
-                    in voluptate velit esse cillum 
+                Lorem ipsum dolor sit amet, 
+                consectetur adipiscing elit, sed 
+                do eiusmod tempor incididunt ut 
+                labore et dolore magna aliqua. 
+                Ut enim ad minim veniam, quis 
+                nostrud exercitation ullamco 
+                laboris nisi ut aliquip ex ea 
+                commodo consequat. Duis aute 
+                irure dolor in reprehenderit 
+                in voluptate velit esse cillum 
         `,
         skills: `Lorem ipsum dolor sit amet, 
                 consectetur adipiscing elit, sed 
                 do eiusmod tempor incididunt ut 
                 labore et dolore magna aliqua. 
                 Ut enim ad minim veniam, quis 
-                nostrud exercitation ullamco 
-        `,
+                nostrud exercitation ullamco`,
         education: 'МГТУ им. Н. Э. Баумана до 2010',
         job: 'MAIL GROUP до 2008',
         aims: 'Хочу от жизни всего',
@@ -106,6 +105,13 @@ const userLoginPwdIdMap = {
     res.cookie('id', id, {expires: new Date(Date.now() + 1000 * 60 * 10)});
     res.status(201).json({id});
 });*/
+
+app.post('/ajax/editprofile', function (req, res) {
+    console.log(req.body.field);
+    console.log(req.body.text);
+    usersProfiles['52'][req.body.field] = req.body.text;
+    res.status(200).send('ok');
+});
 
 app.post('/ajax/peoples', function (req, res) {
     const userId = req.cookies['id'];

@@ -229,7 +229,7 @@ function createProfile(data) {
                 <span class="bold">Интересы</span>
                 <img src="assets/pen.svg" class="editicon" id="interestingsimg">
             </div>
-            <span class="margin10" id="interesting">
+            <span class="margin10" id="interestings">
                 ${data.interestings}
             </span>
             <div class="iconwithtext">
@@ -243,7 +243,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/job.svg" class="meticon">
                 <span class="bold">Карьера</span>
-                <img src="assets/pen.svg" class="editicon" id="jobid">
+                <img src="assets/pen.svg" class="editicon" id="jobimg">
             </div>
             <span class="margin10" id="job">  
                 ${data.job}
@@ -251,7 +251,7 @@ function createProfile(data) {
             <div class="iconwithtext">
                 <img src="assets/aim.svg" class="meticon">
                 <span class="bold">Цели</span>
-                <img src="assets/pen.svg" class="editicon" id="aimsid">
+                <img src="assets/pen.svg" class="editicon" id="aimsimg">
             </div>
             <span class="margin10" id="aims">  
                 ${data.aims}
@@ -309,9 +309,85 @@ function ajax(method, url, callback, body=null) {
     xhr.send();
 }
 
+function addListener(id) {
+    const penImg = document.getElementById(`${id}img`);
+    penImg.addEventListener('click', (evt) => {
+        const mainText = document.getElementById(id);
+        
+        const input = document.createElement('textarea');
+        input.innerHTML = mainText.innerHTML;
+        input.rows = '10';
+        input.cols = '10';
+
+        const checkMark = document.createElement('img');
+        checkMark.src = "assets/check-mark.svg";
+        checkMark.classList.add('editicon');
+
+        const crossMark = document.createElement('img');
+        crossMark.src = "assets/x-mark.svg";
+        crossMark.classList.add('editicon');
+
+        checkMark.addEventListener('click', (evt) => {
+            const mainText = document.createElement('span');
+            mainText.id = id;
+            mainText.classList.add('margin10');
+            mainText.innerHTML = input.value;
+            input.parentNode.insertBefore(mainText, input.nextSibling);
+
+            const penImg = document.createElement('img');
+            penImg.src = "assets/pen.svg";
+            penImg.classList.add('editicon');
+            penImg.id = id + 'img';
+
+            checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
+            addListener(id);
+
+            input.remove();
+            checkMark.remove();
+            crossMark.remove();
+
+            ajax('POST', '/ajax/editprofile', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: id, text: mainText.innerHTML});
+        });
+
+        const oldText = mainText.innerHTML;
+        crossMark.addEventListener('click', (evt) =>{
+            const mainText = document.createElement('span');
+            mainText.id = id;
+            mainText.classList.add('margin10');
+            mainText.innerHTML = oldText;
+
+            input.parentNode.insertBefore(mainText, input.nextSibling);
+
+            const penImg = document.createElement('img');
+            penImg.src = "assets/pen.svg";
+            penImg.classList.add('editicon');
+            penImg.id = id + 'img';
+
+            checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
+            addListener(id);
+
+            input.remove();
+            checkMark.remove();
+            crossMark.remove();
+        });
+
+        penImg.parentNode.insertBefore(checkMark, penImg.nextSibling);
+        penImg.parentNode.insertBefore(crossMark, penImg.nextSibling);
+        penImg.remove();
+    
+        mainText.parentNode.insertBefore(input, mainText.nextSibling);
+        mainText.remove();
+    });
+}
+
 function createProfilePage() {
     application.innerHTML = '';
     createHeader();
+    const fields = ['skills', 'interestings', 'education', 'job', 'aims'];
     ajax('POST', '/ajax/user', (status, responseText) => {
         if (status !== 200) {
             return;
@@ -321,19 +397,9 @@ function createProfilePage() {
 
         let data = JSON.parse(responseText);
         application.appendChild(createProfile(data.userInfo));
-
-        document.getElementById('skillsimg').addEventListener('click', (evt) => {
-            console.log('hello')
-            const mainText = document.getElementById('skills');
-            
-            const input = document.createElement('textarea');
-            input.innerHTML = mainText.innerHTML;
-            input.rows = '10';
-            input.cols = '10';
-
-            mainText.parentNode.insertBefore(input, mainText.nextSibling);
-            mainText.remove();
-        });
+        for (let i = 0; i < fields.length; i++) {
+            addListener(fields[i]);
+        }
 
     }, {userId: 52});
 }
