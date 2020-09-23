@@ -196,13 +196,13 @@ function createProfile(data) {
         <div class="leftcolumn">
             <img src="${data.imgSrc}" class="avatar">
             <div class="iconwithtext">
-                <h2 class="name">${data.name}</h2>
-                <img src="assets/pen.svg" class="editicon">
+                <h2 class="name" id="name">${data.name}</h2>
+                <img src="assets/pen.svg" class="editicon" id="nameimg">
             </div>
             <div class="iconwithtext">
                 <img src="assets/place.svg" class="networkicon">
-                <span>${data.city}</span>
-                <img src="assets/pen.svg" class="editicon">
+                <span id="city">${data.city}</span>
+                <img src="assets/pen.svg" class="editicon" id="cityimg">
             </div>
             <hr>
             <div class="socialnetworks"></div>
@@ -307,44 +307,51 @@ function ajax(method, url, callback, body=null) {
     xhr.send();
 }
 
+function createEditIcon(imgPath) {
+    const element = document.createElement('img');
+    element.src = imgPath;
+    element.classList.add('editicon');
+
+    return element;
+}
+
+function createTextArea(value) {
+    const input = document.createElement('textarea');
+    input.value = value;
+    input.rows = '5';
+    input.cols = '10';
+    input.classList.add('block');
+
+    return input;
+}
+
+function createPenAndRemoveChecks(checkMark, crossMark, id) {
+    const penImg = createEditIcon("assets/pen.svg");
+    penImg.id = id + 'img';
+
+    checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
+    addListener(id);
+
+    checkMark.remove();
+    crossMark.remove();
+}
+
 function addListener(id) {
     const penImg = document.getElementById(`${id}img`);
     penImg.addEventListener('click', (evt) => {
         const mainText = document.getElementById(id);
         
-        const input = document.createElement('textarea');
-        input.innerHTML = mainText.innerHTML;
-        input.rows = '10';
-        input.cols = '10';
-        input.classList.add('block');
-
-        const checkMark = document.createElement('img');
-        checkMark.src = "assets/check-mark.svg";
-        checkMark.classList.add('editicon');
-
-        const crossMark = document.createElement('img');
-        crossMark.src = "assets/x-mark.svg";
-        crossMark.classList.add('editicon');
+        const input = createTextArea(mainText.innerHTML);
+        const checkMark = createEditIcon("assets/check-mark.svg");
+        const crossMark = createEditIcon("assets/x-mark.svg");
 
         checkMark.addEventListener('click', (evt) => {
-            const mainText = document.createElement('span');
-            mainText.id = id;
-            mainText.classList.add('margin10');
             mainText.innerHTML = input.value;
             input.parentNode.insertBefore(mainText, input.nextSibling);
 
-            const penImg = document.createElement('img');
-            penImg.src = "assets/pen.svg";
-            penImg.classList.add('editicon');
-            penImg.id = id + 'img';
-
-            checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
-            addListener(id);
+            createPenAndRemoveChecks(checkMark, crossMark, id);
 
             input.remove();
-            checkMark.remove();
-            crossMark.remove();
-
             ajax('POST', '/ajax/editprofile', (status, responseText) => {
                 if (status !== 200) {
                     alert('Permission denied');
@@ -354,24 +361,12 @@ function addListener(id) {
 
         const oldText = mainText.innerHTML;
         crossMark.addEventListener('click', (evt) =>{
-            const mainText = document.createElement('span');
-            mainText.id = id;
-            mainText.classList.add('margin10');
             mainText.innerHTML = oldText;
-
             input.parentNode.insertBefore(mainText, input.nextSibling);
 
-            const penImg = document.createElement('img');
-            penImg.src = "assets/pen.svg";
-            penImg.classList.add('editicon');
-            penImg.id = id + 'img';
-
-            checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
-            addListener(id);
+            createPenAndRemoveChecks(checkMark, crossMark, id);
 
             input.remove();
-            checkMark.remove();
-            crossMark.remove();
         });
 
         penImg.parentNode.insertBefore(checkMark, penImg.nextSibling);
@@ -386,7 +381,7 @@ function addListener(id) {
 function createProfilePage() {
     application.innerHTML = '';
     createHeader();
-    const fields = ['skills', 'interestings', 'education', 'job', 'aims'];
+    const fields = ['skills', 'interestings', 'education', 'job', 'aims', 'name', 'city'];
     ajax('POST', '/ajax/user', (status, responseText) => {
         if (status !== 200) {
             return;
