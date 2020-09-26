@@ -2,6 +2,7 @@
 
 const express = require('express');
 const body = require('body-parser');
+const formidable = require('express-formidable');
 const cookie = require('cookie-parser');
 const morgan = require('morgan');
 const path = require('path');
@@ -11,8 +12,8 @@ const fs = require('fs');
 
 app.use(morgan('dev'));
 app.use(express.static(path.resolve(__dirname, '..', 'static')));
-app.use(body.json());
 app.use(cookie());
+app.use(body.json());
 
 app.get('/', function(req, res) {
     fs.readFile('static/index.html', function (err, html) {
@@ -175,6 +176,21 @@ app.post('/login', function (req, res) {
     userSessions[token] = userLoginPwdIdMap[login].id;
     res.cookie('authToken', token, {expires: new Date(Date.now() + 1000 * 60 * 10)});
     res.status(200).json({token});
+});
+
+app.post('/signout', function (req, res) {
+    let cookie = req.cookies['authToken'];
+    delete userSessions[cookie];
+
+    res.cookie('authToken', cookie, {expires: new Date(Date.now() - 1000)});
+    res.status(200);
+});
+
+app.use(formidable());
+
+app.post('/signup', function (req, res) {
+    console.log(req.fields);
+    console.log(req.files);
 });
 
 const port = process.env.PORT || 8000;
