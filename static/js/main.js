@@ -547,9 +547,26 @@ function signUpPage() {
     Object.keys(rows).forEach((lbl) => {
         let persInfoRow = document.createElement('div');
         persInfoRow.classList.add('pers-info-row');
-        persInfoRow.appendChild(createLabeledElements(lbl, createBtn(rows[lbl], btnOptions)));
+
+        let textAreaWrapper = document.createElement('span');
+        textAreaWrapper.appendChild(document.createElement('textarea'));
+        textAreaWrapper.classList.add('textarea-wrapper');
+
+        // persInfoRow.appendChild(createLabeledElements(lbl, createBtn(rows[lbl], btnOptions)));
+        persInfoRow.appendChild(createLabeledElements(lbl, textAreaWrapper));
         persInfoBlock.appendChild(persInfoRow);
     });
+
+    let persInfoRow = document.createElement('div');
+    persInfoRow.classList.add('pers-info-row');
+    persInfoRow.appendChild(createLabeledElements(
+        'В каких сферах вы бы хотели получать рекоммендации?', createBtn('+ Добавить рекоммендации', btnOptions)));
+    persInfoBlock.appendChild(persInfoRow);
+
+    const signupBtnBlock = document.createElement('div')
+    signupBtnBlock.appendChild(createBtn('Зарегестрироваться!', {classList: ['stdBtn', 'activable', 'done']}));
+    signupBtnBlock.classList.add('center');
+    persInfoBlock.appendChild(signupBtnBlock);
 
     application.appendChild(formsBlock);
     application.appendChild(separator);
