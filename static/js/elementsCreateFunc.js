@@ -1,8 +1,6 @@
 'use strict';
 
-const application = document.body;
-
-function createHeader() {
+function createHeader(application) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
         <header class="header">
@@ -10,7 +8,7 @@ function createHeader() {
             <input type="search" placeholder="Люди, мероприятия" class="searchinput">
             <img src="assets/pericon.svg" class="icon">
         </header>
-    `
+    `;
 
     const icon = tmp.getElementsByClassName('icon')[0];
     icon.dataset.section = 'profile';
@@ -19,7 +17,7 @@ function createHeader() {
 }
 
 
-function createNavigation() {
+function createNavigation(application) {
     const navigation = document.createElement('nav');
     navigation.classList.add('navigation');
 

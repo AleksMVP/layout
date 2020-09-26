@@ -1,9 +1,9 @@
 'use strict';
 
-function createMetPage() {
+function createMetPage(application) {
     application.innerHTML = '';
-    createHeader();
-    createNavigation();
+    createHeader(application);
+    createNavigation(application);
 
     const main = document.createElement('main');
     main.classList.add('main');
@@ -22,10 +22,10 @@ function createMetPage() {
 }
 
 
-function createPeoplesPage() {
+function createPeoplesPage(application) {
     application.innerHTML = '';
-    createHeader();
-    createNavigation();
+    createHeader(application);
+    createNavigation(application);
 
     const main = document.createElement('main');
     main.classList.add('main');
@@ -49,17 +49,25 @@ function createPeoplesPage() {
 }
 
 
-function createProfilePage() {
+function createProfilePage(application) {
     application.innerHTML = '';
-    createHeader();
+    createHeader(application);
+    createNavigation(application);
 
-    const fields = ['skills', 'interestings', 'education', 'job', 'aims', 'name', 'city'];
+    const fields = [
+        'skills', 
+        'interestings', 
+        'education', 
+        'job', 
+        'aims', 
+        'name', 
+        'city'
+    ];
+
     ajax('POST', '/ajax/user', (status, responseText) => {
         if (status !== 200) {
             return;
         }
-
-        createNavigation();
 
         let data = JSON.parse(responseText);
         application.appendChild(createProfile(data.userInfo));

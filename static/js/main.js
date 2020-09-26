@@ -1,5 +1,7 @@
 'use strict';
 
+const application = document.body;
+
 const appConfig = {
     forMe: {
         text: 'Для меня',
@@ -8,27 +10,37 @@ const appConfig = {
     meetings: {
         text: 'Мероприятия',
         href: '/meetings',
-        open: createMetPage,
+        open: () => {
+            createMetPage(application);
+        },
     },
     people: {
         text: 'Люди',
         href: '/peoples',
-        open: createPeoplesPage,
+        open: () => {
+            createPeoplesPage(application);
+        },
     },
     profile: {
         text: 'Профиль',
         href: '',
-        open: profilePage,
+        open: () => {
+            profilePage(application);
+        },
     },
     registration: {
         text: "Регистрация",
         href: "/registration",
-        open: signUpPage,
+        open: () => {
+            signUpPage(application);
+        },
     },
     login: {
         text: "Логин",
         href: "/login",
-        open: loginPage,
+        open: () => {
+            loginPage(application);
+        },
     }
 }
 
@@ -53,7 +65,7 @@ function ajax(method, url, callback, body=null) {
     xhr.send();
 }
 
-function profilePage() {
+function profilePage(application) {
     ajax('GET', '/ajax/me', (status, responseText) => {
         let isAuthorized = false;
 
@@ -66,15 +78,15 @@ function profilePage() {
         }
 
         if (isAuthorized) {
-            createProfilePage();
+            createProfilePage(application);
             return;
         }
 
-        loginPage();
+        loginPage(application);
     });
 }
 
-function loginPage() {
+function loginPage(application) {
     application.innerHTML = '';
     const div = document.createElement('div');
     div.classList.add('login');
@@ -120,7 +132,7 @@ function loginPage() {
             '/login',
             (status, response) => {
                 if (status === 200) {
-                    createProfilePage();
+                    createProfilePage(application);
                 } else {
                     const {error} = JSON.parse(response);
                     alert(error);
@@ -133,7 +145,7 @@ function loginPage() {
     application.appendChild(div);
 }
 
-function signUpPage() {
+function signUpPage(application) {
     application.innerHTML = '';
 
     const formsBlock = document.createElement('div');
@@ -264,7 +276,7 @@ function createLineSeparator(text, options) {
     return sep;
 }
 
-createMetPage();
+createMetPage(application);
 
 application.addEventListener('click', (evt) => {
     const {target} = evt;
