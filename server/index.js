@@ -57,18 +57,10 @@ const usersProfiles = {
         imgSrc: 'assets/luckash.jpeg',
         name: 'Александр Лукашенко',
         city: 'Пертрозаводск',
-        networks: [
-            {
-                id: 'telegram',
-                link: null,
-                text: null,
-            },
-            {
-                id: 'vk',
-                link: 'helloworld',
-                text: 'superbober',
-            },
-        ],
+        networks: {
+            'telegram': null,
+            'vk': 'https://vk.com/id241926559',
+        },
         metings: [
             {
                 imgSrc: 'assets/vk.png',
@@ -118,6 +110,13 @@ app.post('/ajax/editprofile', function (req, res) {
     usersProfiles['52'][req.body.field] = req.body.text;
     res.status(200).send('ok');
 });
+
+app.post('/ajax/editprofile/social', function (req, res) {
+    console.log(req.body.field);
+    console.log(req.body.text);
+    usersProfiles['52']['networks'][req.body.field] = req.body.text;
+    res.status(200).send('ok');
+})
 
 app.post('/ajax/peoples', function (req, res) {
     const userId = req.cookies['id'];

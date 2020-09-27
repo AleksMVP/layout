@@ -101,35 +101,122 @@ function createProfile(data) {
 
     const metings = tmp.getElementsByClassName('metings')[0];
     data.metings.forEach(func(metings));
+    Object.keys(data.networks).forEach(key => {
+        const obj = data.networks[key];
 
-    /*const networks = tmp.getElementsByClassName('socialnetworks')[0];
-    data.networks.forEach(func(networks));*/
-    data.networks.forEach(obj => {
-        const elem = tmp.getElementsByClassName(obj.id)[0];
+        const elem = tmp.getElementsByClassName(key)[0];
 
-        if (obj.link === null) {
+        if (obj === null) {
             const span = document.createElement('span');
-            span.innerHTML = 'Добавить';
-            span.id = obj.id;
-
-            const img = document.createElement('img');
-            img.src = 'assets/plus.svg';
-            img.classList.add('editicon');
-            img.id = obj.id + 'img';
+            
+            const editicon = createEditIcon('assets/plus.svg');
+            createListener(elem, editicon, key);
 
             elem.appendChild(span);
-            elem.appendChild(img);
+            elem.appendChild(editicon);
         } else {
             const link = document.createElement('a');
             link.classList.add('link');
-            link.href = obj.link;
-            link.innerHTML = obj.text;
+            link.href = obj;
+            link.innerHTML = obj;
 
+            const editicon = createEditIcon('assets/pen.svg');
+            createListenerSecond(elem, editicon, link, key);
             elem.appendChild(link);
+            elem.appendChild(editicon);
         }
     });
 
     return tmp.firstElementChild;
+}
+
+function createListenerSecond(elem, editicon, link, key) {
+    editicon.addEventListener('click', (event) => {
+        const input = document.createElement('input');
+        input.value = link.innerHTML;
+        const checkMark = createEditIcon("assets/check-mark.svg");
+        const crossMark = createEditIcon("assets/x-mark.svg");
+
+        checkMark.addEventListener('click', (event) => {
+            link.href = input.value;
+            link.innerHTML = input.value;
+
+            elem.appendChild(link);
+            elem.appendChild(editicon);
+
+            crossMark.remove();
+            input.remove();
+            checkMark.remove();
+
+            ajax('POST', '/ajax/editprofile/social', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: key, text: link.innerHTML});
+        });
+
+        crossMark.addEventListener('click', (event) => {
+            elem.appendChild(link);
+            elem.appendChild(editicon);
+
+            crossMark.remove();
+            input.remove();
+            checkMark.remove();
+        });
+
+        elem.appendChild(input);
+        elem.appendChild(checkMark);
+        elem.appendChild(crossMark);
+
+        link.remove();
+        editicon.remove();
+    });
+}
+
+function createListener(elem, editicon, key) {
+    editicon.addEventListener('click', (event) => {
+        const input = document.createElement('input');
+        const checkMark = createEditIcon("assets/check-mark.svg");
+        const crossMark = createEditIcon("assets/x-mark.svg");
+
+        checkMark.addEventListener('click', (event) => {
+            const newEditicon = createEditIcon('assets/pen.svg');
+
+            const link = document.createElement('a');
+            link.classList.add('link');
+            link.href = input.value;
+            link.innerHTML = input.value;
+
+            createListenerSecond(elem, newEditicon, link);
+
+            elem.appendChild(link);
+            elem.appendChild(newEditicon);
+
+            crossMark.remove();
+            input.remove();
+            checkMark.remove();
+
+            ajax('POST', '/ajax/editprofile/social', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: key, text: link.innerHTML});
+        });
+
+        crossMark.addEventListener('click', (event) => {
+            elem.appendChild(editicon);
+
+            crossMark.remove();
+            input.remove();
+            checkMark.remove();
+        });
+
+        elem.appendChild(input);
+        elem.appendChild(checkMark);
+        elem.appendChild(crossMark);
+
+        editicon.remove();
+    });
 }
 
 
