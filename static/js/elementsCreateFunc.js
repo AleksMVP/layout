@@ -121,7 +121,14 @@ function createProfile(data) {
                 <img src="assets/pen.svg" class="editicon" id="cityimg">
             </div>
             <hr>
-            <div class="socialnetworks"></div>
+            <div class="socialnetworks">
+                <div class="iconwithtext telegram">
+                    <img src="assets/telegram.png" class="networkicon">
+                </div>
+                <div class="iconwithtext vk">
+                    <img src="assets/vk.png" class="networkicon">
+                </div>
+            </div>
             <hr>
             <div class="iconwithtext">
                 <img src="assets/arrow.svg" class="networkicon">
@@ -176,6 +183,9 @@ function createProfile(data) {
 
     const func = parentItem => {
         return obj => {
+            if (obj === null) {
+                
+            }
             const iconwithtext = document.createElement('div');
             iconwithtext.classList.add('iconwithtext');
 
@@ -197,8 +207,32 @@ function createProfile(data) {
     const metings = tmp.getElementsByClassName('metings')[0];
     data.metings.forEach(func(metings));
 
-    const networks = tmp.getElementsByClassName('socialnetworks')[0];
-    data.networks.forEach(func(networks));
+    /*const networks = tmp.getElementsByClassName('socialnetworks')[0];
+    data.networks.forEach(func(networks));*/
+    data.networks.forEach(obj => {
+        const elem = tmp.getElementsByClassName(obj.id)[0];
+
+        if (obj.link === null) {
+            const span = document.createElement('span');
+            span.innerHTML = 'Добавить';
+            span.id = obj.id;
+
+            const img = document.createElement('img');
+            img.src = 'assets/plus.svg';
+            img.classList.add('editicon');
+            img.id = obj.id + 'img';
+
+            elem.appendChild(span);
+            elem.appendChild(img);
+        } else {
+            const link = document.createElement('a');
+            link.classList.add('link');
+            link.href = obj.link;
+            link.innerHTML = obj.text;
+
+            elem.appendChild(link);
+        }
+    });
 
     return tmp.firstElementChild;
 }
