@@ -115,9 +115,9 @@ label {
     text-align: center;
     font-size: 20px;
     font-family: monospace;
-    font-style: italic;
     max-width: 800px;
     margin-bottom: 25px;
+    color: #8d978d;
 }
 .separator::before, .separator::after {
     content: '';
@@ -154,14 +154,15 @@ label {
     font-weight: 500;
 }
 
-.signup div.center button {
-    margin: 0;
-    margin-top: 24px;
+.center {
+    display: flex;
+    justify-content: center;
+}
+
+div.center button {
     position: relative;
     top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+    margin-right: 20px;
 }
 
 .done:active {
@@ -279,4 +280,12 @@ label {
 /* Hover */
 .form_radio_btn label:hover {
     color: #648880;
+}
+
+.tab {
+    display: none;
+}
+
+input.invalid {
+    background-color: #ffdddd;
 }

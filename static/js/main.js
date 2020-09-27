@@ -44,6 +44,7 @@ const appConfig = {
     }
 }
 
+var currentTab = 0;
 
 function ajax(method, url, callback, body=null) {
     const xhr = new XMLHttpRequest();
@@ -212,7 +213,6 @@ function loginPage(application) {
     application.innerHTML = '';
     createHeader(application);
     createNavigation(application);
-
     const div = document.createElement('div');
     div.classList.add('login');
 
@@ -271,15 +271,8 @@ function loginPage(application) {
     application.appendChild(div);
 }
 
-function signUpPage(application) {
-    application.innerHTML = '';
-
-    createHeader(application);
-    createNavigation(application);
+function createSignupFormLayout() {
     const form = document.createElement('form');
-
-    const formsBlock = document.createElement('div');
-    formsBlock.classList.add('signup');
 
     let createColumn = function (options, ...elements) {
         let col = document.createElement('div');
@@ -288,7 +281,7 @@ function signUpPage(application) {
         let fieldSet = document.createElement('fieldset');
 
         elements.forEach((el) => {
-           fieldSet.appendChild(el);
+            fieldSet.appendChild(el);
         });
 
         col.appendChild(fieldSet);
@@ -296,11 +289,17 @@ function signUpPage(application) {
         return col;
     }
 
+    const tab1 = document.createElement('div');
+    tab1.classList.add('tab');
+
+    const formsBlock = document.createElement('div');
+    formsBlock.classList.add('signup');
+
     const nameInput = createLabeledElements('Имя', createInput(
-        {type: 'text', placeholder: 'Полное имя', name: 'name', required: 'true'}));
+        {type: 'text', placeholder: 'Полное имя', name: 'name', required: 'true', maxLength: '30'}));
 
     const emailInput = createLabeledElements('Адрес электронной почты', createInput(
-        {type: 'email', placeholder: 'Электронная почта', name: 'email', required: 'true'}));
+        {type: 'email', placeholder: 'Электронная почта', name: 'email', required: 'true', maxLength: '250'}));
 
     const profilePhotoBtnLabel = createLabeledElements('Фото профиля');
     const fileUploader = document.createElement('div');
@@ -323,25 +322,24 @@ function signUpPage(application) {
     const sexSelectorLabel = createLabeledElements('Пол', radioBtnWrapper);
 
     const birthDateLabel = createLabeledElements('День рождения',
-        createInput({classList: ['birthDay'], name: 'day', placeholder: 'ДД'}),
-        createInput({classList: ['birthDay'], name: 'month', placeholder: 'ММ'}),
-        createInput({classList: ['birthDay'], name: 'year', placeholder: 'ГГГГ'}),
-        );
+        createInput({classList: ['birthDay'], name: 'day', placeholder: 'ДД', maxLength: '2'}),
+        createInput({classList: ['birthDay'], name: 'month', placeholder: 'ММ', maxLength: '2'}),
+        createInput({classList: ['birthDay'], name: 'year', placeholder: 'ГГГГ', maxLength: '4'}),
+    );
 
-    const cityInput = createLabeledElements('Город', createInput({style: "width: 80%",
-                                                                        name: "city",
-                                                                        placeholder: "Ваш текущий город"}
-                                                                        ));
+    const cityInput = createLabeledElements('Город',
+        createInput({style: "width: 80%", name: "city", placeholder: "Ваш текущий город", maxLength: '30', required: 'true'}
+    ));
 
     const rightCol = createColumn({classList: ['rightcolumn', 'col-1-3']},
         sexSelectorLabel, birthDateLabel, cityInput);
     formsBlock.appendChild(rightCol);
 
-    const separator = createLineSeparator('Информация о себе', {classList: ['signup']});
+    const separator1 = createLineSeparator('Информация о себе', {classList: ['signup']});
 
     const rowsLbls = {'Ключевые навыки' : 'skills',
-                    'Основные интересы' : 'interests',
-                     'Цели' : 'goals'};
+        'Основные интересы' : 'interests',
+        'Цели' : 'goals'};
 
     let rows = [];
     Object.keys(rowsLbls).forEach((lbl) => {
@@ -369,16 +367,161 @@ function signUpPage(application) {
 
     const persInfoBlock = createColumn({classList: ['signup', 'pers-info-block']}, ...rows);
 
-    const signupBtnBlock = document.createElement('div')
-    signupBtnBlock.appendChild(createBtn('Зарегестрироваться!',
-        {type: 'submit', classList: ['stdBtn', 'activable', 'done']}));
-    signupBtnBlock.classList.add('center');
-    persInfoBlock.appendChild(signupBtnBlock);
+    tab1.append(formsBlock, separator1, persInfoBlock);
 
-    form.appendChild(formsBlock);
-    form.appendChild(separator);
-    form.appendChild(persInfoBlock);
+    const tab2 = document.createElement('div');
+    tab2.classList.add('tab');
+
+    const loginPassBlock = document.createElement('div');
+    loginPassBlock.classList.add('signup', 'center');
+
+    const loginInput = createLabeledElements('Логин', createInput(
+        {type: 'text', placeholder: 'Ваш логин', name: 'login', required: 'true', maxLength: '30'}));
+
+    const passwordInput = createLabeledElements('Придумайте пароль', createInput(
+        {type: 'password', placeholder: 'Пароль', name: 'password', required: 'true', maxLength: '30', minLength: '5'}));
+
+    const repeatPasswordInput = createLabeledElements('Повторите пароль', createInput(
+        {type: 'password', placeholder: 'Пароль', name: 'repeatPassword', required: 'true', maxLength: '30'}));
+
+    const col = createColumn({classList: ['leftcolumn', 'col-2-3']},
+        loginInput, passwordInput, repeatPasswordInput);
+
+    loginPassBlock.appendChild(col);
+    tab2.appendChild(loginPassBlock);
+
+    const signupBtnBlock = document.createElement('div')
+    signupBtnBlock.classList.add('center');
+
+    const prevBtn = createBtn('Вернуться',
+        {id: 'prevBtn', type: 'button', classList: ['stdBtn', 'activable', 'done']});
+    prevBtn.onclick = () => nextPrev(-1);
+
+    const nextBtn = createBtn('Далее',
+        {id: 'nextBtn', type: 'button', classList: ['stdBtn', 'activable', 'done']});
+    nextBtn.onclick = () => nextPrev(1);
+
+    signupBtnBlock.append(prevBtn, nextBtn);
+
+    form.append(tab1,tab2, signupBtnBlock);
+
+    return form;
+}
+
+function nextPrev(n) {
+    // This function will figure out which tab to display
+    let x = document.getElementsByClassName("tab");
+    if (n === 1 && !validateSignupForm()) {
+        return false;
+    }
+    // Hide the current tab:
+    x[currentTab].style.display = "none";
+    // Increase or decrease the current tab by 1:
+    currentTab = currentTab + n;
+    // if you have reached the end of the form...
+    if (currentTab >= x.length) {
+        const submBtn = document.getElementById('nextBtn');
+        submBtn.type = 'submit';
+        submBtn.click();
+        currentTab = 0;
+        appConfig.login.open();
+
+        return false;
+    }
+    // Otherwise, display the correct tab:
+    showTab(currentTab);
+}
+
+function validateSignupForm() {
+    let valid = true;
+    let x = document.getElementsByClassName("tab");
+    let y = x[currentTab].querySelectorAll('input[required]');
+    for (let i = 0; i < y.length; i++) {
+        if (y[i].value === "") {
+            y[i].className += " invalid";
+            valid = false;
+        }
+    }
+
+
+    switch (currentTab) {
+        case 0: // first tab
+            const dayInput = document.getElementsByName('day')[0];
+            const monthInput = document.getElementsByName('month')[0];
+            const yearInput = document.getElementsByName('year')[0];
+
+            if (!isValidDate(
+                    parseInt(dayInput.value, 10),
+                    parseInt(monthInput.value, 10),
+                    parseInt(yearInput.value, 10))) {
+                dayInput.classList.add('invalid');
+                monthInput.classList.add('invalid');
+                yearInput.classList.add('invalid');
+                valid = false;
+            }
+            break;
+        case 1:
+            const pwd = document.getElementsByName('password')[0];
+            const repeatPwd = document.getElementsByName('repeatPassword')[0];
+
+            if (!isValidPassword(pwd.value.trim(), repeatPwd.value.trim())) {
+                pwd.classList.add('invalid');
+                repeatPwd.classList.add('invalid');
+
+                valid = false;
+            }
+    }
+
+    return valid;
+}
+
+function isValidPassword(pwd, repeatPwd) {
+    return pwd === repeatPwd;
+
+}
+
+function isValidDate(day, month, year) {
+    // Check the ranges of month and year
+    if(year < 1000 || year > 3000 || month === 0 || month > 12)
+        return false;
+
+    let monthLength = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+
+    // Adjust for leap years
+    if(year % 400 === 0 || (year % 100 !== 0 && year % 4 === 0))
+        monthLength[1] = 29;
+
+    // Check the range of the day
+    return day > 0 && day <= monthLength[month - 1];
+}
+
+function showTab(n) {
+    // This function will display the specified tab of the form...
+    let x = document.getElementsByClassName("tab");
+    x[n].style.display = "block";
+    //... and fix the Previous/Next buttons:
+    if (n === 0) {
+        document.getElementById("prevBtn").style.display = "none";
+    } else {
+        document.getElementById("prevBtn").style.display = "inline";
+    }
+    if (n === (x.length - 1)) {
+        document.getElementById("nextBtn").innerHTML = "Зарегестрироваться!";
+    } else {
+        document.getElementById("nextBtn").innerHTML = "Далее";
+    }
+}
+
+function signUpPage(application) {
+    application.innerHTML = '';
+
+    createHeader(application);
+    createNavigation(application);
+    const form = createSignupFormLayout();
+
     application.appendChild(form);
+
+    showTab(currentTab);
 
     form.addEventListener('submit', (evt) => {
         evt.preventDefault();
@@ -414,7 +557,6 @@ function signUpPage(application) {
     });
 
     const inputs = document.querySelectorAll( '.inputfile' );
-
     Array.prototype.forEach.call( inputs, function( input )
     {
         let label	 = input.nextElementSibling,
@@ -478,6 +620,7 @@ function applyOptionsTo(el, options) {
                 } else if (options[opt] === 'false') {
                     el.required = false;
                 }
+                break;
             default :
                 el[opt] = options[opt];
         }
@@ -500,7 +643,7 @@ function createRadioBtn(btnId, text, name, value, options) {
     const div = document.createElement('div');
     applyOptionsTo(div, options)
     div.appendChild(createInput(
-        {type:'radio', id: btnId, value: value, name: name}));
+        {type:'radio', id: btnId, value: value, name: name, required: 'true'}));
     const lbl = document.createElement('label');
     lbl.htmlFor = btnId;
     lbl.textContent = text;
