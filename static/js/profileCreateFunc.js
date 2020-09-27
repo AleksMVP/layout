@@ -1,110 +1,5 @@
 'use strict';
 
-function createHeader(application) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = `
-        <header class="header">
-            <img src="assets/google.png" class="logo">
-            <input type="search" placeholder="Люди, мероприятия" class="searchinput">
-            <img src="assets/pericon.svg" class="icon">
-        </header>
-    `;
-
-    const icon = tmp.getElementsByClassName('icon')[0];
-    icon.dataset.section = 'profile';
-
-    application.appendChild(tmp.firstElementChild);
-}
-
-
-function createNavigation(application) {
-    const navigation = document.createElement('nav');
-    navigation.classList.add('navigation');
-
-    const navSettings = [
-        'forMe',
-        'meetings',
-        'people',
-    ];
-
-    navSettings.forEach(key => {
-        let option = appConfig[key];
-
-        const navPoint = document.createElement('a');
-        navPoint.innerHTML = option.text;
-        navPoint.href = option.href;
-        navPoint.dataset.section = key;
-        navPoint.classList.add('navpoint');
-
-        navigation.appendChild(navPoint);
-    });
-    
-    application.appendChild(navigation);
-}
-
-
-const wrapCreateChipsFunc = parentNode => {
-    return  labelText => {
-        const label = document.createElement('span');
-        label.classList.add('chips');
-        label.innerHTML = labelText;
-
-        parentNode.appendChild(label);
-    };
-};
-
-
-function createMetCard(data) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = `
-        <div class="metcard" id="${data.cardId}metcard">
-            <img src="${data.imgSrc}" class="metimg">
-            <div class="swimblock top">
-                <span>${data.text}</span>
-                <div class="tabels"></div>  
-            </div>
-            <h3>${data.title}</h3>
-            <h4>${data.place}</h4>
-            <h4>${data.date}</h4>
-        </div>
-    `;
-
-    const labels = tmp.getElementsByClassName('tabels')[0];
-    data.labels.forEach(wrapCreateChipsFunc(labels));
-
-    return tmp.firstElementChild;
-}
-
-
-function createUserCard(data) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = `
-        <div class="usercard" id="${data.cardId}usercard">
-            <img src="${data.imgSrc}" class="overlay">
-            <div class="overlay"></div>
-            <div class="wraper top">
-                <h2>${data.name}</h2>
-                <span>${data.job}</span>
-                
-                <h3>Интересы</h3>
-                <div class="tabels"></div>
-                
-                <h3>Навыки</h3>
-                <div class="tabels"></div>
-            </div>
-        </div>
-    `;
-
-    const interestings = tmp.getElementsByClassName('tabels')[0];
-    data.interestings.forEach(wrapCreateChipsFunc(interestings));
-
-    const skills = tmp.getElementsByClassName('tabels')[1];
-    data.skills.forEach(wrapCreateChipsFunc(skills));
-    
-    return tmp.firstElementChild;
-}
-
-
 function createProfile(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
@@ -307,5 +202,40 @@ function addListener(id) {
     
         mainText.parentNode.insertBefore(input, mainText.nextSibling);
         mainText.remove();
+    });
+}
+
+function addQuitLink() {
+    let icon = document.getElementsByClassName('icon')[0];
+    let span = document.createElement('span');
+    const signout = document.createElement('a');
+    signout.href = '/meetings'
+    signout.textContent = 'Выйти';
+    signout.dataset.section = 'meetings';
+
+    // span.textContent = 'Выйти';
+    span.appendChild(signout);
+    span.classList.add('popuptext');
+    span.id = 'signout';
+
+    const wrapperIcon = document.createElement('div');
+    wrapperIcon.classList.add('popup');
+    wrapperIcon.append(icon, span);
+
+    document.getElementsByClassName('header')[0].appendChild(wrapperIcon);
+
+    icon.onmouseover = () => {
+        let popup = document.getElementById('signout');
+        popup.classList.toggle('show');
+    }
+
+    signout.addEventListener('click', (evt) => {
+        evt.preventDefault();
+
+        ajax('POST',
+            '/signout',
+            (status, responseText) => {
+
+            })
     });
 }
