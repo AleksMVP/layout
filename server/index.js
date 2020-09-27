@@ -59,12 +59,14 @@ const usersProfiles = {
         city: 'Пертрозаводск',
         networks: [
             {
-                imgSrc: 'assets/telegram.png',
-                text: 'Александр Лукашенко',
+                id: 'telegram',
+                link: null,
+                text: null,
             },
             {
-                imgSrc: 'assets/vk.png',
-                text: 'Александр Лукашенко',
+                id: 'vk',
+                link: 'helloworld',
+                text: 'superbober',
             },
         ],
         metings: [

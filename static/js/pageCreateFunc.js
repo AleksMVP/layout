@@ -53,6 +53,7 @@ function createProfilePage(application) {
     application.innerHTML = '';
     createHeader(application);
     createNavigation(application);
+    addQuitLink();
 
     const fields = [
         'skills', 
