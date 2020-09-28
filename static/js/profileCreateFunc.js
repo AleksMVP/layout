@@ -1,108 +1,37 @@
 'use strict';
 
-function createIconWithText(iconSrc, name) {
+function createIconWithText() {
     const wrap = document.createElement('div');
     wrap.classList.add('iconwithtext');
-
-    const icon = document.createElement('img');
-    icon.classList.add('meticon');
-    icon.src = iconSrc;
-
-    const nameSpan = document.createElement('span');
-    nameSpan.classList.add('bold');
-    nameSpan.innerHTML = name;
-
-    const editicon = createEditIcon('assets/pen.svg');
-
-    wrap.appendChild(icon);
-    wrap.appendChild(nameSpan);
-    wrap.appendChild(editicon);
 
     return wrap;
 }
 
-function createProfile(data) {
-    const tmp = document.createElement('div');
-    tmp.innerHTML = `
-    <main class="profilemain">
-        <div class="leftcolumn">
-            <div class="avatarwraper">
-                <form enctype="multipart/form-data" method="post" class="layout">
-                    <input type="file" class="button" value="Выбрать">
-                    <input type="submit" value="Save" class="savebutton">
-                </form>
-                <img src="assets/luckash.jpeg" class="avatar">
-            </div>
-            <div class="iconwithtext">
-                <h2 class="name" id="name">${data.name}</h2>
-                <img src="assets/pen.svg" class="editicon nameediticon" id="nameimg">
-            </div>
-            <div class="iconwithtext">
-                <img src="assets/place.svg" class="networkicon">
-                <span class="city" id="city">${data.city}</span>
-                <img src="assets/pen.svg" class="editicon cityediticon" id="cityimg">
-            </div>
-            <hr>
-            <div class="socialnetworks">
-                <div class="iconwithtext telegram">
-                    <img src="assets/telegram.png" class="networkicon">
-                </div>
-                <div class="iconwithtext vk">
-                    <img src="assets/vk.png" class="networkicon">
-                </div>
-            </div>
-            <hr>
-            <div class="iconwithtext">
-                <img src="assets/arrow.svg" class="networkicon">
-                <span class="bold">Мероприятия</span>
-            </div>
-            <div class="metings"></div>
-        </div>
-        <div class="rightcolumn"></div>
-    </main>
-    `;
+function createMetIcon(iconSrc) {
+    const icon = document.createElement('img');
+    icon.classList.add('meticon');
+    icon.src = iconSrc;
 
-    const button = tmp.getElementsByClassName('button')[0];
-    const avatar = tmp.getElementsByClassName('avatar')[0];
-    const saveButton = tmp.getElementsByClassName('savebutton')[0];
-    saveButton.hidden = true;
+    return icon;
+}
 
-    button.onchange = (event) => {
-        var file = event.target.files[0];
-        var FR = new FileReader();
-        
-        FR.onload = function(event) {
-            console.dir(event);
-            avatar.src = event.target.result;
-            saveButton.hidden = false;
-        };
-        
-        FR.readAsDataURL(file);
-    };
+function createBoldSpan(text) {
+    const nameSpan = document.createElement('span');
+    nameSpan.classList.add('bold');
+    nameSpan.innerHTML = text;
 
-    /*let form = tmp.getElementsByClassName('layout')[0];
-    saveButton.addEventListener('click', function(ev) {
-        let oData = new FormData(form);
+    return nameSpan;
+}
 
-        oData.append("CustomField", "This is some extra data");
-        oData.append("myfile", button.files[0], "filename.txt");
+function createLink(href) {
+    const link = document.createElement('a');
+    link.classList.add('link');
+    link.innerHTML = href;
 
-        var oReq = new XMLHttpRequest();
-        oReq.open("POST", "/ajax/helloworld", true);
-        oReq.onload = function(oEvent) {
-            if (oReq.status == 200) {
-                console.log("Uploaded!");
-            } else {
-                console.log("Error " + oReq.status + " occurred when trying to upload your file.<br \/>");
-            }
-        };
-        console.log(oData);
-        oReq.send(oData);
-        ev.preventDefault();
-    }, false);*/
+    return link;
+}
 
-
-    const rightColumn = tmp.getElementsByClassName('rightcolumn')[0];
+function fillRightColumn(rightColumn, data) {
     const fillRigthColumn = [
         {
             iconSrc: 'assets/diamond.svg',
@@ -133,23 +62,24 @@ function createProfile(data) {
 
 
     for (let i = 0; i < fillRigthColumn.length; i++) {
-        const wrap = createIconWithText(
-            fillRigthColumn[i].iconSrc,
-            fillRigthColumn[i].name,
-        );
+        const id = fillRigthColumn[i].key;
+
+        const wrap = createIconWithText();
+        const editicon = createEditIcon('assets/pen.svg');
+
+        wrap.appendChild(createMetIcon(fillRigthColumn[i].iconSrc));
+        wrap.appendChild(createBoldSpan(fillRigthColumn[i].name));
+        wrap.appendChild(editicon);
 
         const mainText = document.createElement('span');
         mainText.classList.add('margin10');
+        mainText.innerHTML = data[id];
+
+        const input = createTextArea(mainText.innerHTML);
 
         rightColumn.appendChild(wrap);
         rightColumn.appendChild(mainText);
 
-        const id = fillRigthColumn[i].key;
-        mainText.innerHTML = data[id];
-
-        const input = createTextArea(mainText.innerHTML);
-        const editicon = wrap.getElementsByClassName('editicon')[0];
-
         addListener(editicon, mainText, input, () => {
             mainText.innerHTML = input.value;
 
@@ -160,55 +90,123 @@ function createProfile(data) {
             }, {field: id, text: mainText.innerHTML});
         });
     }
+}
 
-    const fillLeftColumn = [
-        'name',
-        'city',
-    ];
+function createNameField(name) {
+    const wrap = createIconWithText();
+    const editicon = createEditIcon("assets/pen.svg");
 
-    for (let i = 0; i < fillLeftColumn.length; i++) {
-        const id = fillLeftColumn[i];
-        const mainText = tmp.getElementsByClassName(id)[0];
-        const editicon = tmp.getElementsByClassName(id + 'editicon')[0];
-        const input = document.createElement('input');
-        input.value = mainText.innerHTML;
+    const mainText = document.createElement('h2');
+    mainText.classList.add('name');
+    mainText.innerHTML = name;
 
-        addListener(editicon, mainText, input, () => {
-            mainText.innerHTML = input.value;
+    wrap.appendChild(mainText);
+    wrap.appendChild(editicon);
 
-            ajax('POST', '/ajax/editprofile', (status, responseText) => {
-                if (status !== 200) {
-                    alert('Permission denied');
-                }
-            }, {field: id, text: mainText.innerHTML});
-        });
-    }
+    const input = document.createElement('input');
+    input.value = mainText.innerHTML;
 
-    const metings = tmp.getElementsByClassName('metings')[0];
-    data.metings.forEach(obj => {
-        const iconwithtext = document.createElement('div');
-        iconwithtext.classList.add('iconwithtext');
+    addListener(editicon, mainText, input, () => {
+        mainText.innerHTML = input.value;
 
-        const img = document.createElement('img');
-        img.src = obj.imgSrc;
-        img.classList.add('networkicon');
-
-        const link = document.createElement('a');
-        link.classList.add('link');
-        link.innerHTML = obj.text;
-
-        iconwithtext.appendChild(img);
-        iconwithtext.appendChild(link);
-        
-        metings.appendChild(iconwithtext);
+        ajax('POST', '/ajax/editprofile', (status, responseText) => {
+            if (status !== 200) {
+                alert('Permission denied');
+            }
+        }, {field: 'name', text: mainText.innerHTML});
     });
 
+    return wrap;
+}
+
+function createCityField(cityName) {
+    const wrap = createIconWithText();
+    const mainText = document.createElement('span');
+    mainText.classList.add('city');
+    mainText.innerHTML = cityName;
+
+    const editicon = createEditIcon('assets/pen.svg');
+
+    wrap.appendChild(createMetIcon('assets/place.svg'));
+    wrap.appendChild(mainText);
+    wrap.appendChild(editicon);
+
+    const input = document.createElement('input');
+    input.value = mainText.innerHTML;
+
+    addListener(editicon, mainText, input, () => {
+        mainText.innerHTML = input.value;
+
+        ajax('POST', '/ajax/editprofile', (status, responseText) => {
+            if (status !== 200) {
+                alert('Permission denied');
+            }
+        }, {field: 'city', text: mainText.innerHTML});
+    });
+
+    return wrap;
+}
+
+function createAvatarField(imgSrc) {
+    const avatarWraper = document.createElement('div');
+    avatarWraper.classList.add('avatarwraper');
+
+    const overlay = document.createElement('div');
+    overlay.classList.add('layout');
+
+    const fileChoser = document.createElement('input');
+    fileChoser.type = 'file';
+    fileChoser.classList.add('button');
+
+    const saveButton = document.createElement('button');
+    saveButton.innerHTML = 'Сохранить';
+    saveButton.classList.add('button');
+
+    saveButton.hidden = true;
+
+    const avatar = document.createElement('img');
+    avatar.classList.add('avatar');
+    avatar.src = imgSrc;
+
+    fileChoser.onchange = (event) => {
+        var file = event.target.files[0];
+        var FR = new FileReader();
+        
+        FR.onload = function(event) {
+            console.dir(event);
+            avatar.src = event.target.result;
+            saveButton.hidden = false;
+        };
+        
+        FR.readAsDataURL(file);
+    };
+
+    overlay.appendChild(fileChoser);
+    overlay.appendChild(saveButton);
+
+    avatarWraper.appendChild(overlay);
+    avatarWraper.appendChild(avatar);
+
+    return avatarWraper;
+}
+
+function createSocialNetworks(data) {
+    const networksConfig = {
+        vk: {
+            src: 'assets/vk.png',
+        },
+        telegram: {
+            src: 'assets/telegram.png',
+        },
+    };  
+
+    const networkWraper = document.createElement('div');
+    networkWraper.classList.add('socialnetworks');
+
     Object.keys(data.networks).forEach(key => {
-        const href = data.networks[key];
-        const elem = tmp.getElementsByClassName(key)[0];
         const input = document.createElement('input');
-        const link = document.createElement('a');
-        link.classList.add('link');
+        const href = data.networks[key];
+        const link = createLink("");
 
         let editicon;
         if (href === "") {
@@ -233,9 +231,64 @@ function createProfile(data) {
             }, {field: key, text: link.innerHTML});
         });
 
+        const elem = createIconWithText();
+        elem.appendChild(createMetIcon(networksConfig[key].src));
         elem.appendChild(link);
         elem.appendChild(editicon);
+
+        networkWraper.appendChild(elem);
     });
+
+    return networkWraper;
+}
+
+function createMetings(data) {
+    const metings = document.createElement('div');
+    metings.classList.add('metings');
+
+    data.metings.forEach(obj => {
+        const iconwithtext = createIconWithText();
+
+        iconwithtext.appendChild(createMetIcon(obj.imgSrc));
+        iconwithtext.appendChild(createLink(obj.text));
+        
+        metings.appendChild(iconwithtext);
+    });
+
+    return metings;
+}
+
+function fillLeftColumn(leftColumn, data) {
+    leftColumn.appendChild(createAvatarField(data.imgSrc));
+    leftColumn.appendChild(createNameField(data.name));
+    leftColumn.appendChild(createCityField(data.city));
+    leftColumn.appendChild(document.createElement('hr'));
+    leftColumn.appendChild(createSocialNetworks(data));
+    leftColumn.appendChild(document.createElement('hr'));
+
+    const wrap = createIconWithText();
+    wrap.appendChild(createMetIcon('assets/arrow.svg'));
+    wrap.appendChild(createBoldSpan('Мероприятия'));
+
+    leftColumn.appendChild(wrap);
+    leftColumn.appendChild(createMetings(data));
+}
+
+function createProfile(data) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = `
+    <main class="profilemain">
+        <div class="leftcolumn"></div>
+        <div class="rightcolumn"></div>
+    </main>
+    `;
+
+    const rightColumn = tmp.getElementsByClassName('rightcolumn')[0];
+    fillRightColumn(rightColumn, data);
+
+    const leftColumn = tmp.getElementsByClassName('leftcolumn')[0];
+    fillLeftColumn(leftColumn, data);
+
 
     return tmp.firstElementChild;
 }
