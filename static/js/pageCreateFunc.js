@@ -55,16 +55,6 @@ function createProfilePage(application) {
     createNavigation(application);
     addQuitLink();
 
-    const fields = [
-        'skills', 
-        'interestings', 
-        'education', 
-        'job', 
-        'aims', 
-        'name', 
-        'city'
-    ];
-
     ajax('POST', '/ajax/user', (status, responseText) => {
         if (status !== 200) {
             return;
@@ -72,9 +62,6 @@ function createProfilePage(application) {
 
         let data = JSON.parse(responseText);
         application.appendChild(createProfile(data.userInfo));
-        for (let i = 0; i < fields.length; i++) {
-            addListener(fields[i]);
-        }
 
     }, {userId: 52});
 }

@@ -110,6 +110,48 @@
     animation: fadeIn 0.5s;
 }
 
+.avatarwraper {
+    position: relative;
+}
+
+.layout {
+    position: absolute;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 10px;
+    background: rgba(0, 0, 0, .3);
+
+    height: 99%;
+    width: 100%;
+
+    object-fit: cover;
+    opacity: 0;
+}
+
+.layout:hover {
+    opacity: 1;
+}
+
+.button {
+    height: 32px;
+    font-size: 15px;
+    padding: 0 16px;
+
+    border-radius: 10px;
+    background:  #ffffff;
+    color: grey;
+    cursor: pointer;
+
+    outline: 0;
+}
+
+.button:active {
+    background-color: #eeecec;
+}
+
 /* Add animation (fade in the popup) */
 @-webkit-keyframes fadeIn {
     from {opacity: 0;}

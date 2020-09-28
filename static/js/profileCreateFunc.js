@@ -1,19 +1,45 @@
 'use strict';
 
+function createIconWithText(iconSrc, name) {
+    const wrap = document.createElement('div');
+    wrap.classList.add('iconwithtext');
+
+    const icon = document.createElement('img');
+    icon.classList.add('meticon');
+    icon.src = iconSrc;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.classList.add('bold');
+    nameSpan.innerHTML = name;
+
+    const editicon = createEditIcon('assets/pen.svg');
+
+    wrap.appendChild(icon);
+    wrap.appendChild(nameSpan);
+    wrap.appendChild(editicon);
+
+    return wrap;
+}
+
 function createProfile(data) {
     const tmp = document.createElement('div');
     tmp.innerHTML = `
     <main class="profilemain">
         <div class="leftcolumn">
-            <img src="${data.imgSrc}" class="avatar">
+            <div class="avatarwraper">
+                <div class="layout">
+                    <button class="button">Загрузить</button>
+                </div>
+                <img src="assets/luckash.jpeg" class="avatar">
+            </div>
             <div class="iconwithtext">
                 <h2 class="name" id="name">${data.name}</h2>
-                <img src="assets/pen.svg" class="editicon" id="nameimg">
+                <img src="assets/pen.svg" class="editicon nameediticon" id="nameimg">
             </div>
             <div class="iconwithtext">
                 <img src="assets/place.svg" class="networkicon">
-                <span id="city">${data.city}</span>
-                <img src="assets/pen.svg" class="editicon" id="cityimg">
+                <span class="city" id="city">${data.city}</span>
+                <img src="assets/pen.svg" class="editicon cityediticon" id="cityimg">
             </div>
             <hr>
             <div class="socialnetworks">
@@ -31,192 +57,145 @@ function createProfile(data) {
             </div>
             <div class="metings"></div>
         </div>
-        <div class="rightcolumn">
-            <div class="iconwithtext">
-                <img src="assets/diamond.svg" class="meticon">
-                <span class="bold">Навыки</span>
-                <img src="assets/pen.svg" class="editicon" id="skillsimg">
-            </div>
-            <span class="margin10" id="skills">
-                ${data.skills}
-            </span>
-            <div class="iconwithtext">
-                <img src="assets/search.svg" class="meticon">
-                <span class="bold">Интересы</span>
-                <img src="assets/pen.svg" class="editicon" id="interestingsimg">
-            </div>
-            <span class="margin10" id="interestings">
-                ${data.interestings}
-            </span>
-            <div class="iconwithtext">
-                <img src="assets/education.svg" class="meticon">
-                <span class="bold">Образование</span>
-                <img src="assets/pen.svg" class="editicon" id="educationimg">
-            </div>
-            <span class="margin10" id="education">
-                ${data.education}
-            </span>
-            <div class="iconwithtext">
-                <img src="assets/job.svg" class="meticon">
-                <span class="bold">Карьера</span>
-                <img src="assets/pen.svg" class="editicon" id="jobimg">
-            </div>
-            <span class="margin10" id="job">  
-                ${data.job}
-            </span>
-            <div class="iconwithtext">
-                <img src="assets/aim.svg" class="meticon">
-                <span class="bold">Цели</span>
-                <img src="assets/pen.svg" class="editicon" id="aimsimg">
-            </div>
-            <span class="margin10" id="aims">  
-                ${data.aims}
-            </span>
-        </div>
+        <div class="rightcolumn"></div>
     </main>
     `;
 
-    const func = parentItem => {
-        return obj => {
-            if (obj === null) {
-                
-            }
-            const iconwithtext = document.createElement('div');
-            iconwithtext.classList.add('iconwithtext');
+    const rightColumn = tmp.getElementsByClassName('rightcolumn')[0];
+    const fillRigthColumn = [
+        {
+            iconSrc: 'assets/diamond.svg',
+            name: 'Навыки',
+            key: 'skills',
+        },
+        {
+            iconSrc: 'assets/search.svg',
+            name: 'Интересы',
+            key: 'interestings',
+        },
+        {
+            iconSrc: 'assets/education.svg',
+            name: 'Образование',
+            key: 'education',
+        },
+        {
+            iconSrc: 'assets/job.svg',
+            name: 'работа',
+            key: 'job',
+        },
+        {
+            iconSrc: 'assets/aim.svg',
+            name: 'Цели',
+            key: 'aims',
+        },
+    ];
 
-            const img = document.createElement('img');
-            img.src = obj.imgSrc;
-            img.classList.add('networkicon');
+    const fillLeftColumn = [
+        'name',
+        'city',
+    ];
 
-            const link = document.createElement('a');
-            link.classList.add('link');
-            link.innerHTML = obj.text;
+    for (let i = 0; i < fillLeftColumn.length; i++) {
+        const id = fillLeftColumn[i];
+        const mainText = tmp.getElementsByClassName(id)[0];
+        const editicon = tmp.getElementsByClassName(id + 'editicon')[0];
+        const input = document.createElement('input');
+        input.value = mainText.innerHTML;
 
-            iconwithtext.appendChild(img);
-            iconwithtext.appendChild(link);
-            
-            parentItem.appendChild(iconwithtext);
-        };
-    };
+        addListener(editicon, mainText, input, () => {
+            mainText.innerHTML = input.value;
+
+            ajax('POST', '/ajax/editprofile', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: id, text: mainText.innerHTML});
+        });
+    }
+
+    for (let i = 0; i < fillRigthColumn.length; i++) {
+        const wrap = createIconWithText(
+            fillRigthColumn[i].iconSrc,
+            fillRigthColumn[i].name,
+        );
+
+        const mainText = document.createElement('span');
+        mainText.classList.add('margin10');
+
+        rightColumn.appendChild(wrap);
+        rightColumn.appendChild(mainText);
+
+        const id = fillRigthColumn[i].key;
+        mainText.innerHTML = data[id];
+
+        const input = createTextArea(mainText.innerHTML);
+        const editicon = wrap.getElementsByClassName('editicon')[0];
+
+        addListener(editicon, mainText, input, () => {
+            mainText.innerHTML = input.value;
+
+            ajax('POST', '/ajax/editprofile', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: id, text: mainText.innerHTML});
+        });
+    }
 
     const metings = tmp.getElementsByClassName('metings')[0];
-    data.metings.forEach(func(metings));
+    data.metings.forEach(obj => {
+        const iconwithtext = document.createElement('div');
+        iconwithtext.classList.add('iconwithtext');
+
+        const img = document.createElement('img');
+        img.src = obj.imgSrc;
+        img.classList.add('networkicon');
+
+        const link = document.createElement('a');
+        link.classList.add('link');
+        link.innerHTML = obj.text;
+
+        iconwithtext.appendChild(img);
+        iconwithtext.appendChild(link);
+        
+        metings.appendChild(iconwithtext);
+    });
+
     Object.keys(data.networks).forEach(key => {
-        const obj = data.networks[key];
-
+        const href = data.networks[key];
         const elem = tmp.getElementsByClassName(key)[0];
+        const input = document.createElement('input');
+        const link = document.createElement('a');
+        link.classList.add('link');
 
-        if (obj === null) {
-            const span = document.createElement('span');
-            
-            const editicon = createEditIcon('assets/plus.svg');
-            createListener(elem, editicon, key);
-
-            elem.appendChild(span);
-            elem.appendChild(editicon);
+        let editicon;
+        if (href === "") {
+            editicon = createEditIcon('assets/plus.svg');
         } else {
-            const link = document.createElement('a');
-            link.classList.add('link');
-            link.href = obj;
-            link.innerHTML = obj;
+            link.href = href;
+            link.innerHTML = href;
+            input.value = href;
 
-            const editicon = createEditIcon('assets/pen.svg');
-            createListenerSecond(elem, editicon, link, key);
-            elem.appendChild(link);
-            elem.appendChild(editicon);
+            editicon = createEditIcon('assets/pen.svg');
         }
+
+        addListener(editicon, link, input, () => {
+            link.href = input.value;
+            link.innerHTML = input.value;
+
+            editicon.src = 'assets/pen.svg';
+            ajax('POST', '/ajax/editprofile/social', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: key, text: link.innerHTML});
+        });
+
+        elem.appendChild(link);
+        elem.appendChild(editicon);
     });
 
     return tmp.firstElementChild;
-}
-
-function createListenerSecond(elem, editicon, link, key) {
-    editicon.addEventListener('click', (event) => {
-        const input = document.createElement('input');
-        input.value = link.innerHTML;
-        const checkMark = createEditIcon("assets/check-mark.svg");
-        const crossMark = createEditIcon("assets/x-mark.svg");
-
-        checkMark.addEventListener('click', (event) => {
-            link.href = input.value;
-            link.innerHTML = input.value;
-
-            elem.appendChild(link);
-            elem.appendChild(editicon);
-
-            crossMark.remove();
-            input.remove();
-            checkMark.remove();
-
-            ajax('POST', '/ajax/editprofile/social', (status, responseText) => {
-                if (status !== 200) {
-                    alert('Permission denied');
-                }
-            }, {field: key, text: link.innerHTML});
-        });
-
-        crossMark.addEventListener('click', (event) => {
-            elem.appendChild(link);
-            elem.appendChild(editicon);
-
-            crossMark.remove();
-            input.remove();
-            checkMark.remove();
-        });
-
-        elem.appendChild(input);
-        elem.appendChild(checkMark);
-        elem.appendChild(crossMark);
-
-        link.remove();
-        editicon.remove();
-    });
-}
-
-function createListener(elem, editicon, key) {
-    editicon.addEventListener('click', (event) => {
-        const input = document.createElement('input');
-        const checkMark = createEditIcon("assets/check-mark.svg");
-        const crossMark = createEditIcon("assets/x-mark.svg");
-
-        checkMark.addEventListener('click', (event) => {
-            const newEditicon = createEditIcon('assets/pen.svg');
-
-            const link = document.createElement('a');
-            link.classList.add('link');
-            link.href = input.value;
-            link.innerHTML = input.value;
-
-            createListenerSecond(elem, newEditicon, link);
-
-            elem.appendChild(link);
-            elem.appendChild(newEditicon);
-
-            crossMark.remove();
-            input.remove();
-            checkMark.remove();
-
-            ajax('POST', '/ajax/editprofile/social', (status, responseText) => {
-                if (status !== 200) {
-                    alert('Permission denied');
-                }
-            }, {field: key, text: link.innerHTML});
-        });
-
-        crossMark.addEventListener('click', (event) => {
-            elem.appendChild(editicon);
-
-            crossMark.remove();
-            input.remove();
-            checkMark.remove();
-        });
-
-        elem.appendChild(input);
-        elem.appendChild(checkMark);
-        elem.appendChild(crossMark);
-
-        editicon.remove();
-    });
 }
 
 
@@ -239,53 +218,29 @@ function createTextArea(value) {
     return input;
 }
 
-
-function createPenAndRemoveChecks(checkMark, crossMark, id) {
-    const penImg = createEditIcon("assets/pen.svg");
-    penImg.id = id + 'img';
-
-    checkMark.parentNode.insertBefore(penImg, checkMark.nextSibling);
-    addListener(id);
-
-    checkMark.remove();
-    crossMark.remove();
-}
-
-
-function addListener(id) {
-    const penImg = document.getElementById(`${id}img`);
-    penImg.addEventListener('click', (evt) => {
-        const mainText = document.getElementById(id);
-        
-        const input = createTextArea(mainText.innerHTML);
+function addListener(actor, mainText, input, action) {
+    actor.addEventListener('click', (evt) => {
         const checkMark = createEditIcon("assets/check-mark.svg");
         const crossMark = createEditIcon("assets/x-mark.svg");
 
+        const returnMainRemoveMarks = (evt) => {
+            input.parentNode.insertBefore(mainText, input.nextSibling);
+            checkMark.parentNode.insertBefore(actor, checkMark.nextSibling);
+
+            checkMark.remove();
+            crossMark.remove();
+            input.remove();
+        };
+
         checkMark.addEventListener('click', (evt) => {
-            mainText.innerHTML = input.value;
-            input.parentNode.insertBefore(mainText, input.nextSibling);
-
-            createPenAndRemoveChecks(checkMark, crossMark, id);
-
-            input.remove();
-            ajax('POST', '/ajax/editprofile', (status, responseText) => {
-                if (status !== 200) {
-                    alert('Permission denied');
-                }
-            }, {field: id, text: mainText.innerHTML});
+            action();
+            returnMainRemoveMarks(evt);
         });
+        crossMark.addEventListener('click', returnMainRemoveMarks);
 
-        crossMark.addEventListener('click', (evt) =>{
-            input.parentNode.insertBefore(mainText, input.nextSibling);
-
-            createPenAndRemoveChecks(checkMark, crossMark, id);
-
-            input.remove();
-        });
-
-        penImg.parentNode.insertBefore(checkMark, penImg.nextSibling);
-        penImg.parentNode.insertBefore(crossMark, penImg.nextSibling);
-        penImg.remove();
+        actor.parentNode.insertBefore(checkMark, actor.nextSibling);
+        actor.parentNode.insertBefore(crossMark, actor.nextSibling);
+        actor.remove();
     
         mainText.parentNode.insertBefore(input, mainText.nextSibling);
         mainText.remove();

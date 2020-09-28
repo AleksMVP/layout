@@ -58,7 +58,7 @@ const usersProfiles = {
         name: 'Александр Лукашенко',
         city: 'Пертрозаводск',
         networks: {
-            'telegram': null,
+            'telegram': '',
             'vk': 'https://vk.com/id241926559',
         },
         metings: [
