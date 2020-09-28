@@ -27,9 +27,10 @@ function createProfile(data) {
     <main class="profilemain">
         <div class="leftcolumn">
             <div class="avatarwraper">
-                <div class="layout">
-                    <button class="button">Загрузить</button>
-                </div>
+                <form enctype="multipart/form-data" method="post" class="layout">
+                    <input type="file" class="button" value="Выбрать">
+                    <input type="submit" value="Save" class="savebutton">
+                </form>
                 <img src="assets/luckash.jpeg" class="avatar">
             </div>
             <div class="iconwithtext">
@@ -61,6 +62,46 @@ function createProfile(data) {
     </main>
     `;
 
+    const button = tmp.getElementsByClassName('button')[0];
+    const avatar = tmp.getElementsByClassName('avatar')[0];
+    const saveButton = tmp.getElementsByClassName('savebutton')[0];
+    saveButton.hidden = true;
+
+    button.onchange = (event) => {
+        var file = event.target.files[0];
+        var FR = new FileReader();
+        
+        FR.onload = function(event) {
+            console.dir(event);
+            avatar.src = event.target.result;
+            saveButton.hidden = false;
+        };
+        
+        FR.readAsDataURL(file);
+    };
+
+    /*let form = tmp.getElementsByClassName('layout')[0];
+    saveButton.addEventListener('click', function(ev) {
+        let oData = new FormData(form);
+
+        oData.append("CustomField", "This is some extra data");
+        oData.append("myfile", button.files[0], "filename.txt");
+
+        var oReq = new XMLHttpRequest();
+        oReq.open("POST", "/ajax/helloworld", true);
+        oReq.onload = function(oEvent) {
+            if (oReq.status == 200) {
+                console.log("Uploaded!");
+            } else {
+                console.log("Error " + oReq.status + " occurred when trying to upload your file.<br \/>");
+            }
+        };
+        console.log(oData);
+        oReq.send(oData);
+        ev.preventDefault();
+    }, false);*/
+
+
     const rightColumn = tmp.getElementsByClassName('rightcolumn')[0];
     const fillRigthColumn = [
         {
@@ -90,28 +131,6 @@ function createProfile(data) {
         },
     ];
 
-    const fillLeftColumn = [
-        'name',
-        'city',
-    ];
-
-    for (let i = 0; i < fillLeftColumn.length; i++) {
-        const id = fillLeftColumn[i];
-        const mainText = tmp.getElementsByClassName(id)[0];
-        const editicon = tmp.getElementsByClassName(id + 'editicon')[0];
-        const input = document.createElement('input');
-        input.value = mainText.innerHTML;
-
-        addListener(editicon, mainText, input, () => {
-            mainText.innerHTML = input.value;
-
-            ajax('POST', '/ajax/editprofile', (status, responseText) => {
-                if (status !== 200) {
-                    alert('Permission denied');
-                }
-            }, {field: id, text: mainText.innerHTML});
-        });
-    }
 
     for (let i = 0; i < fillRigthColumn.length; i++) {
         const wrap = createIconWithText(
@@ -130,6 +149,29 @@ function createProfile(data) {
 
         const input = createTextArea(mainText.innerHTML);
         const editicon = wrap.getElementsByClassName('editicon')[0];
+
+        addListener(editicon, mainText, input, () => {
+            mainText.innerHTML = input.value;
+
+            ajax('POST', '/ajax/editprofile', (status, responseText) => {
+                if (status !== 200) {
+                    alert('Permission denied');
+                }
+            }, {field: id, text: mainText.innerHTML});
+        });
+    }
+
+    const fillLeftColumn = [
+        'name',
+        'city',
+    ];
+
+    for (let i = 0; i < fillLeftColumn.length; i++) {
+        const id = fillLeftColumn[i];
+        const mainText = tmp.getElementsByClassName(id)[0];
+        const editicon = tmp.getElementsByClassName(id + 'editicon')[0];
+        const input = document.createElement('input');
+        input.value = mainText.innerHTML;
 
         addListener(editicon, mainText, input, () => {
             mainText.innerHTML = input.value;

@@ -18,9 +18,10 @@
     <main class="profilemain">
         <div class="leftcolumn">
             <div class="avatarwraper">
-                <div class="layout">
-                    <button class="button">Загрузить</button>
-                </div>
+                <form enctype="multipart/form-data" method="post" class="layout">
+                    <input type="file" class="button" value="Выбрать">
+                    <input type="submit" value="Save">
+                </form>
                 <img src="assets/luckash.jpeg" class="avatar">
             </div>
             <div class="iconwithtext">

@@ -120,6 +120,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 
     border-radius: 10px;
     background: rgba(0, 0, 0, .3);
@@ -136,16 +137,9 @@
 }
 
 .button {
-    height: 32px;
-    font-size: 15px;
-    padding: 0 16px;
-
+    padding: 10px;
     border-radius: 10px;
     background:  #ffffff;
-    color: grey;
-    cursor: pointer;
-
-    outline: 0;
 }
 
 .button:active {

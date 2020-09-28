@@ -154,6 +154,12 @@ app.post('/ajax/user', function(req, res) {
     }
 });
 
+app.post('/ajax/helloworld', function(req, res) {
+    console.log(req.body);
+
+    res.status(200).end();
+});
+
 app.get('/ajax/me', function (req, res) {
     const token = req.cookies['authToken'];
     const userId = userSessions[token];
