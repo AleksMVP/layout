@@ -61,14 +61,14 @@ function fillRightColumn(rightColumn, data) {
     ];
 
 
-    for (let i = 0; i < fillRigthColumn.length; i++) {
-        const id = fillRigthColumn[i].key;
+    fillRigthColumn.forEach((item) => {
+        const id = item.key;
 
         const wrap = createIconWithText();
         const editicon = createEditIcon('assets/pen.svg');
 
-        wrap.appendChild(createMetIcon(fillRigthColumn[i].iconSrc));
-        wrap.appendChild(createBoldSpan(fillRigthColumn[i].name));
+        wrap.appendChild(createMetIcon(item.iconSrc));
+        wrap.appendChild(createBoldSpan(item.name));
         wrap.appendChild(editicon);
 
         const mainText = document.createElement('span');
@@ -89,7 +89,7 @@ function fillRightColumn(rightColumn, data) {
                 }
             }, {field: id, text: mainText.innerHTML});
         });
-    }
+    });
 }
 
 function createNameField(name) {
@@ -181,6 +181,16 @@ function createAvatarField(imgSrc) {
         FR.readAsDataURL(file);
     };
 
+    saveButton.onclick = (event) => {
+        let blobFile = fileChoser.files[0];
+        let formData = new FormData();
+        formData.append("fileToUpload", blobFile, 'kek.txt');
+
+        let request = new XMLHttpRequest();
+        request.open('POST', '/ajax/editprofile/uploadimage');
+        request.send(formData);
+    }
+
     overlay.appendChild(fileChoser);
     overlay.appendChild(saveButton);
 
@@ -192,20 +202,16 @@ function createAvatarField(imgSrc) {
 
 function createSocialNetworks(data) {
     const networksConfig = {
-        vk: {
-            src: 'assets/vk.png',
-        },
-        telegram: {
-            src: 'assets/telegram.png',
-        },
+        vk: 'assets/vk.png',
+        telegram: 'assets/telegram.png',
     };  
 
     const networkWraper = document.createElement('div');
     networkWraper.classList.add('socialnetworks');
 
-    Object.keys(data.networks).forEach(key => {
+    Object.keys(networksConfig).forEach(key => {
         const input = document.createElement('input');
-        const href = data.networks[key];
+        const href = data[key];
         const link = createLink("");
 
         let editicon;
@@ -232,7 +238,7 @@ function createSocialNetworks(data) {
         });
 
         const elem = createIconWithText();
-        elem.appendChild(createMetIcon(networksConfig[key].src));
+        elem.appendChild(createMetIcon(networksConfig[key]));
         elem.appendChild(link);
         elem.appendChild(editicon);
 

@@ -57,10 +57,8 @@ const usersProfiles = {
         imgSrc: 'assets/luckash.jpeg',
         name: 'Александр Лукашенко',
         city: 'Пертрозаводск',
-        networks: {
-            'telegram': '',
-            'vk': 'https://vk.com/id241926559',
-        },
+        telegram: '',
+        vk: 'https://vk.com/id241926559',
         metings: [
             {
                 imgSrc: 'assets/vk.png',
@@ -154,10 +152,10 @@ app.post('/ajax/user', function(req, res) {
     }
 });
 
-app.post('/ajax/helloworld', function(req, res) {
-    console.log(req.body);
-
-    res.status(200).end();
+app.post('/ajax/editprofile/uploadimage', function(req, res) {
+    
+    console.log(req.files);
+    return;
 });
 
 app.get('/ajax/me', function (req, res) {
